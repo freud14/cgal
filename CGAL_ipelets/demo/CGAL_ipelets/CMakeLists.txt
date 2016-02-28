@@ -121,6 +121,7 @@ if ( CGAL_FOUND )
     set(CGAL_IPELETS ${CGAL_IPELETS} hyperbolic)
     set(CGAL_IPELETS ${CGAL_IPELETS} distance)
     set(CGAL_IPELETS ${CGAL_IPELETS} cone_spanners)
+    set(CGAL_IPELETS ${CGAL_IPELETS} wspd)
 
 
     if ( IPELET_INSTALL_DIR )
