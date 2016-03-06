@@ -2,10 +2,10 @@ namespace CGAL {
 /*!
 
 \mainpage User Manual
-\anchor Chapter_PACKAGE_NAME
-\anchor chaptermine
+\anchor Chapter_Well_separated_pair_decomposition
+\anchor ChapterWspd
 \cgalAutoToc
-\author AUTHOR1, AUTHOR2
+\author Frédérik Paradis
 
 This chapter describes the ...
 

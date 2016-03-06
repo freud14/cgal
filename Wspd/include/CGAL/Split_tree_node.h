@@ -50,6 +50,7 @@ class Split_tree_node {
 
 public:
   Split_tree_node(int d_, Point_container container_, Traits traits_) : traits(traits_), container(d_, container_.begin(), container_.end(), traits), d(d_) {
+    std::cout << container_.size() << std::endl;
     if(container_.size() >= 2) {
       Point_container left_container(d, container_.begin(), container_.end(), traits);
       Point_container right_container(d, traits);
