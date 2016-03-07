@@ -1,5 +1,4 @@
 #include <iostream>
-#include <CGAL/Cartesian_d.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/CGAL_Ipelet_base.h>
@@ -14,7 +13,6 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel     Epick;
 typedef CGAL::Split_tree_traits_2<Epick>                        Kernel;
 typedef CGAL::Split_tree<Kernel>                                Split_tree;
 typedef CGAL::WSPD<Kernel>                                      WSPD;
-typedef typename WSPD::Node                                     Node;
 typedef typename WSPD::Well_separated_pair                      Well_separated_pair;
 
 const std::string labels[] = {  "Split tree bounding boxes", "WSPD", "t-spanner (using t)", "t-spanner (using s)", "Help" };

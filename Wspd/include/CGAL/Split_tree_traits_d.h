@@ -17,64 +17,49 @@
 //
 // Author(s)     : Frédérik Paradis (<fpara058@uottawa.ca>)
 
-#ifndef CGAL_SPLIT_TREE_TRAITS_2_H
-#define CGAL_SPLIT_TREE_TRAITS_2_H
-#include <CGAL/Search_traits_2.h>
+#ifndef CGAL_SPLIT_TREE_TRAITS_D_H
+#define CGAL_SPLIT_TREE_TRAITS_D_H
+#include <CGAL/Search_traits_d.h>
 
 namespace CGAL {
 
   template <class K >
-  class Split_tree_traits_2 : public Search_traits_2<K> {
+  class Split_tree_traits_d : public Search_traits_d<K> {
   public:
-    typedef typename K::Vector_2 Vector_d;
-    typedef typename K::Aff_transformation_2 Aff_transformation_d;
+    typedef typename K::Sphere_d Sphere_d;
+    typedef typename K::Vector_d Vector_d;
+    typedef typename K::Aff_transformation_d Aff_transformation_d;
     typedef typename K::RT RT;
 
     template <class K_>
     class Construct_sphere {
     public:
-      typedef typename K_::Circle_2 Circle_2;
-      typedef typename K_::Point_2 Point_2;
+      typedef typename K_::Sphere_d Sphere_d;
+      typedef typename K_::Point_d Point_d;
       template<class InputIterator>
-      Circle_2 operator()(int d, InputIterator first, InputIterator last) const {
-        CGAL_assertion(d == 2);
-        Point_2 p = *first++;
-        Point_2 q = *first++;
-        Point_2 r = *first++;
-        if(p != q && q != r) {
-          assert(!CGAL::collinear(p, q, r));
-          return Circle_2(p, q, r);
-        }
-        else {
-          return Circle_2(p);
-        }
-
+      Sphere_d operator()(int d, InputIterator first, InputIterator last) const {
+        return Sphere_d(d, first, last);
       }
     };
 
     template <class K_>
     class Construct_point {
     public:
-      typedef typename K_::Point_2 Point_2;
+      typedef typename K_::Point_d Point_d;
       typedef typename K_::FT FT;
       template<class InputIterator>
-      Point_2 operator()(int d, InputIterator first, InputIterator last) const {
-        CGAL_assertion(d == 2);
-        FT x = *first++;
-        FT y = *first++;
-        return Point_2(x, y);
+      Point_d operator()(int d, InputIterator first, InputIterator last) const {
+        return Point_d(d, first, last);
       }
     };
 
     template <class K_>
     class Construct_aff_transformation {
     public:
-      typedef typename K_::Aff_transformation_2 Aff_transformation_2;
+      typedef typename K_::Aff_transformation_d Aff_transformation_d;
       typedef typename K_::RT RT;
-      Aff_transformation_2 operator()(int d, Rotation ro, RT sin_num, RT cos_num, RT den, int e1=0, int e2=1) const {
-        CGAL_assertion(d == 2);
-        CGAL_assertion(e1 != e2);
-        return Aff_transformation_2(ro, sin_num/den, cos_num/den);
+      Aff_transformation_d operator()(int d, Rotation ro, RT sin_num, RT cos_num, RT den, int e1=0, int e2=1) const {
+        return Aff_transformation_d(d, ro, sin_num, cos_num, den, e1, e2);
       }
     };
 
@@ -95,4 +80,4 @@ namespace CGAL {
   };
 
 } // namespace CGAL
-#endif // CGAL_SPLIT_TREE_TRAITS_2_H
+#endif // CGAL_SPLIT_TREE_TRAITS_D_H

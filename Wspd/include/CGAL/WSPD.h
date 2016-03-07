@@ -42,17 +42,21 @@ public:
   typedef typename Traits::FT                                  FT;
 
   template <class InputIterator>
-  WSPD(int d, double separation_ratio, InputIterator begin, InputIterator end) : s(separation_ratio), split_tree(d, begin, end) { }
+  WSPD(int d, double separation_ratio, InputIterator begin, InputIterator end) : s(separation_ratio), split_tree_(d, begin, end) { }
 
   template <class OutputIterator>
   OutputIterator compute(OutputIterator result) const {
-    compute(split_tree.root(), result);
+    compute(split_tree_.root(), result);
     return result;
   }
 
   template <class InputIterator>
   void set(int d, InputIterator begin, InputIterator end) {
-    split_tree = Split_tree(d, begin, end);
+    split_tree_ = Split_tree(d, begin, end);
+  }
+
+  const Split_tree& split_tree() {
+    return split_tree_;
   }
 
   ~WSPD() { }
@@ -103,7 +107,7 @@ private:
     return max_v > max_w;
   }
 private:
-  Split_tree split_tree;
+  Split_tree split_tree_;
   double s;
 };
 
