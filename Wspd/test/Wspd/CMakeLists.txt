@@ -7,7 +7,7 @@ project( Wspd )
 cmake_minimum_required(VERSION 2.8.11)
 
 # CGAL and its components
-find_package( CGAL QUIET COMPONENTS  )
+find_package( CGAL QUIET COMPONENTS Core )
 
 if ( NOT CGAL_FOUND )
 
@@ -46,5 +46,7 @@ include( CGAL_CreateSingleSourceCGALProgram )
 create_single_source_cgal_program( "test_wspd_3.cpp" )
 
 create_single_source_cgal_program( "test_wspd_d.cpp" )
+
+create_single_source_cgal_program( "test_wspd_worst_case.cpp" )
 
 

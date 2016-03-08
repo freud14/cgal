@@ -67,6 +67,7 @@ int main(int argc, char* argv[]) {
   }
 
   std::cin >> ch;
+  return 0;
 }
 
 Segment_3 segment_between_spheres(const Sphere_3& s1, const Sphere_3& s2) {

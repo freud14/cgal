@@ -1,3 +1,4 @@
+#include <iostream>
 #include <CGAL/Cartesian_d.h>
 #include <CGAL/point_generators_d.h>
 #include <CGAL/iterator.h>
@@ -18,7 +19,7 @@ typedef typename WSPD::Split_tree Split_tree;
 
 int main(int argc, char* argv[]) {
   const unsigned int D = 4;
-  const unsigned int N = 1000;
+  const unsigned int N = 10000;
   Random_points_iterator rpit(D, 1.0);
   std::vector<Point_d> pts;
   pts.reserve(N);
@@ -28,4 +29,12 @@ int main(int argc, char* argv[]) {
   std::vector<Well_separated_pair> pairs;
   WSPD wspd(D, 1.0, pts.begin(), pts.end());
   wspd.compute(std::back_inserter(pairs));
+
+  /*for(std::vector<Well_separated_pair>::iterator it = pairs.begin(); it < pairs.end(); it++) {
+    Well_separated_pair &pair = *it;
+    std::cout << "(" << pair.first->point_container().size() << ", " << pair.second->point_container().size() << ")" << std::endl;
+  }*/
+
+  std::cout << pairs.size() << std::endl;
+  return 0;
 }
