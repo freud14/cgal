@@ -56,23 +56,34 @@ public:
       Splitter split;
       Separator sep;
       split(sep, left_container, right_container);
-      left_ = new Node(d, left_container, traits);
-      right_ = new Node(d, right_container, traits);
+      left_child = new Node(d, left_container, traits);
+      right_child = new Node(d, right_container, traits);
     }
     else {
-      left_ = NULL;
-      right_ = NULL;
+      left_child = NULL;
+      right_child = NULL;
+    }
+  }
+
+  Split_tree_node(const Split_tree_node& node) : traits(node.traits), container(node.d, node.container.begin(), node.container.end(), traits), d(node.d) {
+    if(node.left_child != NULL && node.right_child != NULL) {
+      left_child = new Node(*node.left_child);
+      right_child = new Node(*node.right_child);
+    }
+    else {
+      left_child = NULL;
+      right_child = NULL;
     }
   }
 
   ~Split_tree_node() {
-    delete left_;
-    delete right_;
+    delete left_child;
+    delete right_child;
   }
 
-  inline const Node* left() const { return left_;}
-  inline const Node* right() const { return right_; }
-  inline bool is_leaf() const { return left_ == NULL || right_ == NULL; }
+  inline const Node* left() const { return left_child;}
+  inline const Node* right() const { return right_child; }
+  inline bool is_leaf() const { return left_child == NULL || right_child == NULL; }
 
   Iso_box_d bounding_box() const {
     const Kd_tree_rectangle<FT, D>& bbox = container.bounding_box();
@@ -106,8 +117,8 @@ public:
   }
 private:
   Traits traits;
-  Node* left_;
-  Node* right_;
+  Node* left_child;
+  Node* right_child;
   Point_container container; //Node
   int d;
 };

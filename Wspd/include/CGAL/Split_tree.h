@@ -38,26 +38,38 @@ private:
 
 public:
   template <class InputIterator>
-  Split_tree(int d, InputIterator begin, InputIterator end) : points(begin, end) {
-    for(int i = 0; i < points.size(); i++) {
-      p_vec.push_back(&points[i]);
-    }
-    Point_container root_container(d, p_vec.begin(), p_vec.end(), traits);
-    root_ = new Node(d, root_container, traits);
+  Split_tree(int d_, InputIterator begin, InputIterator end) : d(d_), points(begin, end) {
+    construtor();
+  }
+
+  Split_tree(const Split_tree<Traits>& split_tree) : d(split_tree.d), points(split_tree.points) {
+    construtor();
   }
 
   ~Split_tree() {
-    delete root_;
+    destructor();
+  }
+
+  Split_tree<Traits>& operator=(const Split_tree<Traits>& split_tree) {
+    if (this == &split_tree) {
+      return *this;
+    }
+
+    destructor();
+    d = split_tree.d;
+    points = Point_vector(split_tree.points);
+    construtor();
+    return *this;
   }
 
   template <class OutputIterator>
   OutputIterator bounding_boxes(OutputIterator result) const {
-    bounding_boxes(root_, result);;
+    bounding_boxes(tree_root, result);;
     return result;
   }
 
   const Node* root() const {
-    return root_;
+    return tree_root;
   }
 private:
   template <class OutputIterator>
@@ -70,11 +82,24 @@ private:
     }
   }
 
+  void construtor() {
+    for(int i = 0; i < points.size(); i++) {
+      p_vec.push_back(&points[i]);
+    }
+    Point_container root_container(d, p_vec.begin(), p_vec.end(), traits);
+    tree_root = new Node(d, root_container, traits);
+  }
+
+  void destructor() {
+    delete tree_root;
+  }
+
 private:
+  int d;
   Point_vector points;
   Point_ptr_vector p_vec;
   Traits traits;
-  Node* root_;
+  Node* tree_root;
 };
 
 
