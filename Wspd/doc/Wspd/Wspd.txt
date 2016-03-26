@@ -7,11 +7,24 @@ namespace CGAL {
 \cgalAutoToc
 \author Frédérik Paradis
 
-This chapter describes the ...
+\section WspdIntroduction Introduction
 
-\section secmydefinitions Definitions
+Two subsets \f$A, B \subseteq \mathbb{R}^d\f$ are well-separated with respect to
+\f$s > 0\f$ iff there are two \f$d\f$-dimensional balls \f$C_A\f$ and \f$C_B\f$
+with the same radius  \f$\rho\f$ respectively enclosing \f$A\f$ and \f$B\f$ such
+that the distance between \f$C_A\f$ and \f$C_B\f$ is less than or equal to
+\f$s\f$ times \f$\rho\f$. A Well-Separated Pair Decomposition (%WSPD) of a point
+set \f$S \subseteq \mathbb{R}^d\f$  is  set of pairs
+\f$\{\{A_1, B_1\}, \{A_2, B_2\}, \ldots, \{A_m, B_m\}\}\f$ such that, for each
+pair \f$\{A_i, B_i\}\f$, \f$1 \leq i \leq m\f$, \f$A_i\f$ and \f$B_i\f$ are
+well-separated, and for any distinct point \f$p\f$ and \f$q\f$ in \f$S\f$, there
+is a unique pair \f$\{A_i, B_i\}\f$, \f$1 \leq i \leq m\f$, so that
 
-Section on definitions here ...
+ - \f$p \in A_i\f$ and \f$q \in B_i\f$, or
+ - \f$q \in A_i\f$ and \f$p \in B_i\f$.
+
+This chapter describes the functions provided in \cgal for producing a
+Well-Separated Pair Decomposition of a point set. To that end,
 
 \section secmyexamples Examples
 
