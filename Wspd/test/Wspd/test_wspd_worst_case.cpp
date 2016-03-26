@@ -10,6 +10,7 @@ typedef Kernel::FT FT;
 
 typedef CGAL::Split_tree_traits_2<Kernel> Traits;
 typedef CGAL::WSPD<Traits> WSPD;
+typedef typename WSPD::Well_separated_pair_iterator Well_separated_pair_iterator;
 typedef typename WSPD::Well_separated_pair Well_separated_pair;
 typedef typename WSPD::Split_tree Split_tree;
 
@@ -21,10 +22,7 @@ int main(int argc, char* argv[]) {
   for(int i = 0; i < N; i++) {
     pts.push_back(Point_2(FT(0), CORE::pow(FT(2), i)));
   }
-  std::vector<Well_separated_pair> pairs;
   WSPD wspd(2, 1.0, pts.begin(), pts.end());
-  wspd.compute(std::back_inserter(pairs));
-
-  std::cout << pairs.size() << std::endl;
+  std::cout << wspd.size() << std::endl;
   return 0;
 }

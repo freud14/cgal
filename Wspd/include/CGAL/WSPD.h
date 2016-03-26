@@ -19,6 +19,7 @@
 
 #ifndef CGAL_WSPD_H
 #define CGAL_WSPD_H
+#include <iostream>
 #include <CGAL/Split_tree.h>
 #include <CGAL/Point_container.h>
 #include <utility>
@@ -36,54 +37,108 @@ public:
   typedef typename CGAL::Split_tree<Traits>::Point_d           Point_d;
   typedef typename CGAL::Split_tree<Traits>::Node              Node;
   typedef typename std::pair<const Node*, const Node*>         Well_separated_pair;
+  typedef typename std::vector<Well_separated_pair>            Well_separated_pair_decomposition;
+  typedef typename Well_separated_pair_decomposition::iterator Well_separated_pair_iterator;
+
+  typedef typename std::vector<Point_d>                        Point_vector;
+  typedef typename Point_vector::iterator                      Point_vector_iterator;
 
   typedef typename Traits::Sphere_d                            Sphere_d;
   typedef typename Traits::Vector_d                            Vector_d;
   typedef typename Traits::FT                                  FT;
 
-  template <class InputIterator>
-  WSPD(int d, double separation_ratio, InputIterator begin, InputIterator end) : s(separation_ratio), computed_split_tree(d, begin, end) { }
+  WSPD(int d, FT separation_ratio) : s(separation_ratio), computed_split_tree(d), computed(true) { }
 
-  template <class OutputIterator>
-  OutputIterator compute(OutputIterator result) const {
-    compute(computed_split_tree.root(), result);
-    return result;
+  template <class InputIterator>
+  WSPD(int d, FT separation_ratio, InputIterator begin, InputIterator end) : s(separation_ratio), computed_split_tree(d, begin, end), computed(false) { }
+
+  virtual void compute() const {
+    if(!computed) {
+      wspd.clear();
+      compute(computed_split_tree.root());
+      computed = true;
+    }
+  }
+
+  void separation_ratio(FT separation_ratio) {
+    if(s != separation_ratio) {
+      s = separation_ratio;
+      computed = false;
+    }
   }
 
   template <class InputIterator>
   void set(int d, InputIterator begin, InputIterator end) {
-    computed_split_tree = Split_tree(d, begin, end);
+    points.clear();
+    points.insert(points.end(), begin, end);
+    computed_split_tree.set(d, begin, end);
+    computed = false;
+  }
+
+  template <class InputIterator>
+  void add(InputIterator begin, InputIterator end) {
+    points.insert(points.end(), begin, end);
+    computed_split_tree.add(begin, end);
+    computed = false;
+  }
+
+  template <class InputIterator>
+  void clear() {
+    points.clear();
+    computed_split_tree.clear();
+    wspd.clear();
+    computed = true;
   }
 
   const Split_tree& split_tree() {
     return computed_split_tree;
   }
 
+  Well_separated_pair_iterator wspd_begin() const {
+    compute();
+    return wspd.begin();
+  }
+
+  Well_separated_pair_iterator wspd_end() const {
+    compute();
+    return wspd.end();
+  }
+
+  Point_vector_iterator points_begin() const {
+    return points.begin();
+  }
+
+  Point_vector_iterator points_end() const {
+    return points.end();
+  }
+
+  int size() const {
+    compute();
+    return wspd.size();
+  }
+
   ~WSPD() { }
 private:
-  template <class OutputIterator>
-  void compute(const Node* u, OutputIterator& result) const {
+  void compute(const Node* u) const {
     if(u != NULL && !u->is_leaf()) {
-      find_pairs(u->left(), u->right(), result);
-      compute(u->left(), result);
-      compute(u->right(), result);
+      find_pairs(u->left(), u->right());
+      compute(u->left());
+      compute(u->right());
     }
   }
 
-  template <class OutputIterator>
-  void find_pairs(const Node* v, const Node* w, OutputIterator& result) const {
+  void find_pairs(const Node* v, const Node* w) const {
     if(are_well_separated(v, w)) {
-      *result = std::make_pair(v,w);
-      result++;
+      wspd.push_back(std::make_pair(v,w));
     }
     else {
       if(has_longuest_side(v, w)) {
-        find_pairs(v->left(), w, result);
-        find_pairs(v->right(), w, result);
+        find_pairs(v->left(), w);
+        find_pairs(v->right(), w);
       }
       else {
-        find_pairs(v, w->left(), result);
-        find_pairs(v, w->right(), result);
+        find_pairs(v, w->left());
+        find_pairs(v, w->right());
       }
     }
   }
@@ -106,9 +161,12 @@ private:
     FT max_w = *std::max_element(vector_w.cartesian_begin(), vector_w.cartesian_end());
     return max_v > max_w;
   }
-private:
+protected:
+  mutable bool computed;
+  mutable Well_separated_pair_decomposition wspd;
   Split_tree computed_split_tree;
-  double s;
+  Point_vector points;
+  FT s;
 };
 
 

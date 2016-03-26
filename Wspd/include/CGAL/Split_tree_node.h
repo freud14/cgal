@@ -49,7 +49,9 @@ class Split_tree_node {
   typedef typename Splitter::Separator                               Separator;
 
 public:
-  Split_tree_node(int d_, Point_container container_, Traits traits_) : traits(traits_), container(d_, container_.begin(), container_.end(), traits), d(d_) {
+  Split_tree_node(int d_, Traits traits_) : traits(traits_), container(d_, traits_), d(d_), left_child(NULL), right_child(NULL) { }
+
+  Split_tree_node(int d_, Point_container container_, Traits traits_) : traits(traits_), container(d_, container_.begin(), container_.end(), traits_), d(d_) {
     if(container_.size() >= 2) {
       Point_container left_container(d, container_.begin(), container_.end(), traits);
       Point_container right_container(d, traits);
@@ -65,7 +67,7 @@ public:
     }
   }
 
-  Split_tree_node(const Split_tree_node& node) : traits(node.traits), container(node.d, node.container.begin(), node.container.end(), traits), d(node.d) {
+  Split_tree_node(const Split_tree_node& node) : traits(node.traits), container(node.d, node.container.begin(), node.container.end(), node.traits), d(node.d) {
     if(node.left_child != NULL && node.right_child != NULL) {
       left_child = new Node(*node.left_child);
       right_child = new Node(*node.right_child);
@@ -108,7 +110,6 @@ public:
       Point_d point_on_sphere = center + radius_vector.transform(traits.construct_aff_transformation_d_object()(d, Rotation(), RT(1), RT(0), RT(1), 0, i));
       points_on_sphere.push_back(point_on_sphere);
     }
-    traits.construct_sphere_d_object()(d, points_on_sphere.begin(), points_on_sphere.end());
     return traits.construct_sphere_d_object()(d, points_on_sphere.begin(), points_on_sphere.end());
   }
 

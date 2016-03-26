@@ -12,8 +12,11 @@ namespace CGAL_wspd {
 typedef CGAL::Exact_predicates_inexact_constructions_kernel     Epick;
 typedef CGAL::Split_tree_traits_2<Epick>                        Kernel;
 typedef CGAL::Split_tree<Kernel>                                Split_tree;
+typedef typename Split_tree::Bounding_box_iterator              Bounding_box_iterator;
 typedef CGAL::WSPD<Kernel>                                      WSPD;
+typedef typename WSPD::Well_separated_pair_iterator             Well_separated_pair_iterator;
 typedef typename WSPD::Well_separated_pair                      Well_separated_pair;
+
 
 const std::string labels[] = {  "Split tree bounding boxes", "WSPD", "t-spanner (using t)", "t-spanner (using s)", "Help" };
 const std::string hmsg[] = {
@@ -68,9 +71,7 @@ void Wspd_ipelet::protected_run(int fn)
     case 0:
     {
       Split_tree tree(2, lst.begin(), lst.end());
-      std::vector<Iso_rectangle_2> rect;
-      tree.bounding_boxes(std::back_inserter(rect));
-      for(std::vector<Iso_rectangle_2>::iterator it = rect.begin(); it < rect.end(); it++) {
+      for(Bounding_box_iterator it = tree.bounding_box_begin(); it < tree.bounding_box_end(); it++) {
         draw_in_ipe(*it);
       }
       group_selected_objects_();
@@ -81,9 +82,7 @@ void Wspd_ipelet::protected_run(int fn)
       double s = request_double_from_user(1.0, 2.0, "Enter separation ratio s (default: 2)", "Invalid separation ratio");
       if(s == -1) return;
       WSPD wspd(2, s, lst.begin(), lst.end());
-      std::vector<Well_separated_pair> pairs;
-      wspd.compute(std::back_inserter(pairs));
-      for(std::vector<Well_separated_pair>::iterator it = pairs.begin(); it < pairs.end(); it++) {
+      for(Well_separated_pair_iterator it = wspd.wspd_begin(); it < wspd.wspd_end(); it++) {
         Well_separated_pair &pair = *it;
         Circle_2 c1 = pair.first->enclosing_circle();
         Circle_2 c2 = pair.second->enclosing_circle();
@@ -112,9 +111,7 @@ void Wspd_ipelet::protected_run(int fn)
       }
 
       WSPD wspd(2, s, lst.begin(), lst.end());
-      std::vector<Well_separated_pair> pairs;
-      wspd.compute(std::back_inserter(pairs));
-      for(std::vector<Well_separated_pair>::iterator it = pairs.begin(); it < pairs.end(); it++) {
+      for(Well_separated_pair_iterator it = wspd.wspd_begin(); it < wspd.wspd_end(); it++) {
         Well_separated_pair &pair = *it;
         draw_in_ipe(Segment_2(**pair.first->point_container().begin(), **pair.second->point_container().begin()));
       }

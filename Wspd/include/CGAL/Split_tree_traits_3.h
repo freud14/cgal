@@ -23,9 +23,10 @@
 
 namespace CGAL {
 
-  template <class K >
-  class Split_tree_traits_3 : public Search_traits_3<K> {
+  template <class Kernel >
+  class Split_tree_traits_3 : public Search_traits_3<Kernel> {
   public:
+    typedef Kernel K;
     typedef typename K::Vector_3 Vector_d;
     typedef typename K::Aff_transformation_3 Aff_transformation_d;
     typedef typename K::RT RT;

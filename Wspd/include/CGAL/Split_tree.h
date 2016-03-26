@@ -32,22 +32,29 @@ public:
   typedef typename Traits::Point_d                                          Point_d;
   typedef typename Traits::Iso_box_d                                        Iso_box_d;
   typedef typename CGAL::Point_container<Traits>                            Point_container;
+
+  typedef std::vector<Iso_box_d>                                            Bounding_box_vector;
+  typedef typename Bounding_box_vector::iterator                            Bounding_box_iterator;
 private:
   typedef std::vector<Point_d>                                              Point_vector;
   typedef std::vector<const Point_d*>                                       Point_ptr_vector;
 
 public:
+  Split_tree(int d_) : d(d_), tree_root(NULL), computed(true), bbox_computed(true) { }
+
   template <class InputIterator>
-  Split_tree(int d_, InputIterator begin, InputIterator end) : d(d_), points(begin, end) {
-    construtor();
+  Split_tree(int d_, InputIterator begin, InputIterator end) :
+                d(d_), points(begin, end), tree_root(NULL) {
+    invalidate_cache();
   }
 
-  Split_tree(const Split_tree<Traits>& split_tree) : d(split_tree.d), points(split_tree.points) {
-    construtor();
+  Split_tree(const Split_tree<Traits>& split_tree) :
+                d(split_tree.d), points(split_tree.points), tree_root(NULL) {
+    invalidate_cache();
   }
 
   ~Split_tree() {
-    destructor();
+    delete_root();
   }
 
   Split_tree<Traits>& operator=(const Split_tree<Traits>& split_tree) {
@@ -55,51 +62,105 @@ public:
       return *this;
     }
 
-    destructor();
+    delete_root();
     d = split_tree.d;
-    points = Point_vector(split_tree.points);
-    construtor();
+    points = split_tree.points;
+    tree_root = NULL;
+    invalidate_cache();
     return *this;
   }
 
-  template <class OutputIterator>
-  OutputIterator bounding_boxes(OutputIterator result) const {
-    bounding_boxes(tree_root, result);;
-    return result;
+  void compute_bounding_boxes() const {
+    compute();
+    if(!bbox_computed) {
+      bounding_boxes.clear();
+      compute_bounding_boxes(tree_root);
+      bbox_computed = true;
+    }
+  }
+
+  Bounding_box_iterator bounding_box_begin() const {
+    compute_bounding_boxes();
+    return bounding_boxes.begin();
+  }
+
+  Bounding_box_iterator bounding_box_end() const {
+    compute_bounding_boxes();
+    return bounding_boxes.end();
   }
 
   const Node* root() const {
+    compute();
     return tree_root;
   }
+
+  template <class InputIterator>
+  void set(int d_, InputIterator begin, InputIterator end) {
+    d = d_;
+    points.clear();
+    points.insert(points.end(), begin, end);
+    invalidate_cache();
+  }
+
+  template <class InputIterator>
+  void add(int d_, InputIterator begin, InputIterator end) {
+    CGAL_assertion(points.size() == 0 || d == d_);
+    d = d_;
+    points.insert(points.end(), begin, end);
+    invalidate_cache();
+  }
+
+
+  void clear() {
+    points.clear();
+    p_vec.clear();
+    bounding_boxes.clear();
+    delete_root();
+    computed = true;
+    bbox_computed = true;
+  }
+
+  void compute() const {
+    if(!computed) {
+      delete_root();
+      p_vec.clear();
+      for(int i = 0; i < points.size(); i++) {
+        p_vec.push_back(&points[i]);
+      }
+      Point_container root_container(d, p_vec.begin(), p_vec.end(), traits);
+      tree_root = new Node(d, root_container, traits);
+      computed = true;
+    }
+  }
 private:
-  template <class OutputIterator>
-  void bounding_boxes(const Node* node, OutputIterator& result) const {
+  void compute_bounding_boxes(const Node* node) const {
     if(!node->is_leaf()) {
-      *result = node->bounding_box();
-      result++;
-      bounding_boxes(node->left(), result);
-      bounding_boxes(node->right(), result);
+      bounding_boxes.push_back(node->bounding_box());
+      compute_bounding_boxes(node->left());
+      compute_bounding_boxes(node->right());
     }
   }
 
-  void construtor() {
-    for(int i = 0; i < points.size(); i++) {
-      p_vec.push_back(&points[i]);
-    }
-    Point_container root_container(d, p_vec.begin(), p_vec.end(), traits);
-    tree_root = new Node(d, root_container, traits);
+  void delete_root() const {
+    if(tree_root) delete tree_root;
+    tree_root = NULL;
   }
 
-  void destructor() {
-    delete tree_root;
+  void invalidate_cache() {
+    computed = false;
+    bbox_computed = false;
   }
-
 private:
   int d;
   Point_vector points;
-  Point_ptr_vector p_vec;
   Traits traits;
-  Node* tree_root;
+
+  mutable bool computed;
+  mutable Point_ptr_vector p_vec;
+  mutable Node* tree_root;
+
+  mutable bool bbox_computed;
+  mutable Bounding_box_vector bounding_boxes;
 };
 
 

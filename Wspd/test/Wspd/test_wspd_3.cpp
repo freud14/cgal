@@ -17,8 +17,10 @@ typedef CGAL::Counting_iterator<Random_points_iterator> N_Random_points_iterator
 
 typedef CGAL::Split_tree_traits_3<Kernel> Traits;
 typedef CGAL::WSPD<Traits> WSPD;
+typedef typename WSPD::Well_separated_pair_iterator Well_separated_pair_iterator;
 typedef typename WSPD::Well_separated_pair Well_separated_pair;
 typedef typename WSPD::Split_tree Split_tree;
+typedef typename Split_tree::Bounding_box_iterator Bounding_box_iterator;
 
 typedef CGAL::Geomview_stream Geomview_stream;
 
@@ -33,15 +35,12 @@ int main(int argc, char* argv[]) {
   const unsigned int N = 10;
   Random_points_iterator rpit(1.0);
   std::vector<Point_3> pts(N_Random_points_iterator(rpit,0), N_Random_points_iterator(N));
-  std::vector<Well_separated_pair> pairs;
   WSPD wspd(3, 1.0, pts.begin(), pts.end());
-  wspd.compute(std::back_inserter(pairs));
-
   Geomview_stream gv(CGAL::Bbox_3(-1, -1, -1, 1, 1, 1));
   gv.clear();
   add_to_gv(gv, pts.begin(), pts.end());
 
-  for(std::vector<Well_separated_pair>::iterator it = pairs.begin(); it < pairs.end(); it++) {
+  for(Well_separated_pair_iterator it = wspd.wspd_begin(); it < wspd.wspd_end(); it++) {
     Well_separated_pair &pair = *it;
     Sphere_3 s1 = pair.first->enclosing_circle();
     Sphere_3 s2 = pair.second->enclosing_circle();
@@ -60,9 +59,7 @@ int main(int argc, char* argv[]) {
   gv.clear();
   add_to_gv(gv, pts.begin(), pts.end());
   const Split_tree& tree = wspd.split_tree();
-  std::vector<Iso_cuboid_3> rect;
-  tree.bounding_boxes(std::back_inserter(rect));
-  for(std::vector<Iso_cuboid_3>::iterator it = rect.begin(); it != rect.end(); it++) {
+  for(Bounding_box_iterator it = tree.bounding_box_begin(); it < tree.bounding_box_end(); it++) {
     gv << (*it).bbox();
   }
 

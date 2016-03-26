@@ -13,6 +13,7 @@ typedef CGAL::Random_points_in_cube_d<Point_d> Random_points_iterator;
 
 typedef CGAL::Split_tree_traits_d<Kernel> Traits;
 typedef CGAL::WSPD<Traits> WSPD;
+typedef typename WSPD::Well_separated_pair_iterator Well_separated_pair_iterator;
 typedef typename WSPD::Well_separated_pair Well_separated_pair;
 typedef typename WSPD::Split_tree Split_tree;
 
@@ -26,15 +27,13 @@ int main(int argc, char* argv[]) {
   for(int i = 0; i < N; i++) {
     pts.push_back(*rpit++);
   }
-  std::vector<Well_separated_pair> pairs;
   WSPD wspd(D, 1.0, pts.begin(), pts.end());
-  wspd.compute(std::back_inserter(pairs));
 
-  /*for(std::vector<Well_separated_pair>::iterator it = pairs.begin(); it < pairs.end(); it++) {
+  /*for(Well_separated_pair_iterator it = wspd.wspd_begin(); it < wspd.wspd_end(); it++) {
     Well_separated_pair &pair = *it;
     std::cout << "(" << pair.first->point_container().size() << ", " << pair.second->point_container().size() << ")" << std::endl;
   }*/
 
-  std::cout << pairs.size() << std::endl;
+  std::cout << wspd.size() << std::endl;
   return 0;
 }
