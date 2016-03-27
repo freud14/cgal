@@ -97,8 +97,7 @@ public:
   template <class InputIterator>
   void set(int d_, InputIterator begin, InputIterator end) {
     d = d_;
-    points.clear();
-    points.insert(points.end(), begin, end);
+    points.assign(begin, end);
     invalidate_cache();
   }
 

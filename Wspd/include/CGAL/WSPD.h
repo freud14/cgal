@@ -69,8 +69,7 @@ public:
 
   template <class InputIterator>
   void set(int d, InputIterator begin, InputIterator end) {
-    points.clear();
-    points.insert(points.end(), begin, end);
+    points.assign(begin, end);
     computed_split_tree.set(d, begin, end);
     computed = false;
   }
