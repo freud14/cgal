@@ -21,12 +21,12 @@
 #define CGAL_SPLIT_TREE_H
 #include <CGAL/Split_tree_node.h>
 #include <CGAL/Point_container.h>
+#include <vector>
 
 namespace CGAL {
 
 template <class Traits>
 class Split_tree {
-
 public:
   typedef Split_tree_node<Traits>                                           Node;
   typedef typename Traits::Point_d                                          Point_d;

@@ -28,14 +28,13 @@ namespace CGAL {
   public:
     typedef Kernel K;
     typedef typename K::Vector_2 Vector_d;
-    typedef typename K::Aff_transformation_2 Aff_transformation_d;
-    typedef typename K::RT RT;
 
     template <class K_>
     class Construct_sphere {
     public:
       typedef typename K_::Circle_2 Circle_2;
       typedef typename K_::Point_2 Point_2;
+      typedef typename K_::FT FT;
       template<class InputIterator>
       Circle_2 operator()(int d, InputIterator first, InputIterator last) const {
         CGAL_assertion(d == 2);
@@ -49,7 +48,13 @@ namespace CGAL {
         else {
           return Circle_2(p);
         }
+      }
 
+      Circle_2 operator()(int d, const Point_2& a, const Point_2& b) const {
+        CGAL_assertion(d == 2);
+        Point_2 center = CGAL::midpoint(a, b);
+        FT squared_radius = CGAL::squared_distance(center, b);
+        return Circle_2(center, squared_radius);
       }
     };
 
@@ -67,18 +72,6 @@ namespace CGAL {
       }
     };
 
-    template <class K_>
-    class Construct_aff_transformation {
-    public:
-      typedef typename K_::Aff_transformation_2 Aff_transformation_2;
-      typedef typename K_::RT RT;
-      Aff_transformation_2 operator()(int d, Rotation ro, RT sin_num, RT cos_num, RT den, int e1=0, int e2=1) const {
-        CGAL_assertion(d == 2);
-        CGAL_assertion(e1 != e2);
-        return Aff_transformation_2(ro, sin_num/den, cos_num/den);
-      }
-    };
-
     typedef Construct_sphere<K> Construct_sphere_d;
     Construct_sphere_d construct_sphere_d_object() const {
       return Construct_sphere_d();
@@ -87,11 +80,6 @@ namespace CGAL {
     typedef Construct_point<K> Construct_point_d;
     Construct_point_d construct_point_d_object() const {
       return Construct_point_d();
-    }
-
-    typedef Construct_aff_transformation<K> Construct_aff_transformation_d;
-    Construct_aff_transformation_d construct_aff_transformation_d_object() const {
-      return Construct_aff_transformation_d();
     }
   };
 

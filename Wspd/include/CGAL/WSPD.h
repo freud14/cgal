@@ -19,12 +19,11 @@
 
 #ifndef CGAL_WSPD_H
 #define CGAL_WSPD_H
-#include <iostream>
 #include <CGAL/Split_tree.h>
 #include <CGAL/Point_container.h>
+#include <CGAL/constructions_d.h>
 #include <utility>
 #include <algorithm>
-#include <CGAL/number_utils.h>
 
 namespace CGAL {
 
@@ -143,10 +142,8 @@ private:
   }
 
   bool are_well_separated(const Node* v, const Node* w) const  {
-    Sphere_d cir_v = v->enclosing_circle();
-    Sphere_d cir_w = w->enclosing_circle();
-    FT max_rad =  std::max(cir_v.squared_radius(), cir_w.squared_radius());
-    FT distance_vw = CGAL::squared_distance(cir_v.center(), cir_w.center());
+    FT max_rad =  std::max(v->squared_radius(), w->squared_radius());
+    FT distance_vw = CGAL::squared_distance(v->center(), w->center());
     return distance_vw >= (s+2)*(s+2)*max_rad;
   }
 

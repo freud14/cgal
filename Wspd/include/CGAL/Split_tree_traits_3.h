@@ -28,7 +28,6 @@ namespace CGAL {
   public:
     typedef Kernel K;
     typedef typename K::Vector_3 Vector_d;
-    typedef typename K::Aff_transformation_3 Aff_transformation_d;
     typedef typename K::RT RT;
 
     template <class K_>
@@ -36,6 +35,7 @@ namespace CGAL {
     public:
       typedef typename K_::Sphere_3 Sphere_3;
       typedef typename K_::Point_3 Point_3;
+      typedef typename K_::FT FT;
       template<class InputIterator>
       Sphere_3 operator()(int d, InputIterator first, InputIterator last) const {
         CGAL_assertion(d == 3);
@@ -50,7 +50,13 @@ namespace CGAL {
         else {
           return Sphere_3(p);
         }
+      }
 
+      Sphere_3 operator()(int d, const Point_3& a, const Point_3& b) const {
+        CGAL_assertion(d == 3);
+        Point_3 center = CGAL::midpoint(a, b);
+        FT squared_radius = CGAL::squared_distance(center, b);
+        return Sphere_3(center, squared_radius);
       }
     };
 
@@ -69,27 +75,6 @@ namespace CGAL {
       }
     };
 
-    template <class K_>
-    class Construct_aff_transformation {
-    public:
-      typedef typename K_::Aff_transformation_3 Aff_transformation_3;
-      typedef typename K_::RT RT;
-      Aff_transformation_3 operator()(int d, Rotation ro, RT sin_num, RT cos_num, RT den, int e1=0, int e2=1) const {
-        CGAL_assertion(d == 3);
-        CGAL_assertion(e1 < d);
-        CGAL_assertion(e2 < d);
-        RT M[3][3];
-        for (int i = 0; i < 3; i++) {
-          for (int j = 0; j < 3; j++) {
-            M[i][j] = RT(0) ? i != j : RT(1);
-          }
-        }
-        M[e1][e1] = cos_num/den; M[e1][e2] = -sin_num/den;
-        M[e2][e1] = sin_num/den; M[e2][e2] = cos_num/den;
-        return Aff_transformation_3(M[0][0], M[0][1], M[0][2], M[1][0], M[1][1], M[1][2], M[2][0], M[2][1], M[2][2]);
-      }
-    };
-
     typedef Construct_sphere<K> Construct_sphere_d;
     Construct_sphere_d construct_sphere_d_object() const {
       return Construct_sphere_d();
@@ -98,11 +83,6 @@ namespace CGAL {
     typedef Construct_point<K> Construct_point_d;
     Construct_point_d construct_point_d_object() const {
       return Construct_point_d();
-    }
-
-    typedef Construct_aff_transformation<K> Construct_aff_transformation_d;
-    Construct_aff_transformation_d construct_aff_transformation_d_object() const {
-      return Construct_aff_transformation_d();
     }
   };
 

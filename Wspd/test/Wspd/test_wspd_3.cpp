@@ -5,6 +5,8 @@
 #include <CGAL/Split_tree_traits_3.h>
 #include <CGAL/IO/Geomview_stream.h>
 
+#include <CGAL/Random.h>
+
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::Point_3 Point_3;
 typedef Kernel::Sphere_3 Sphere_3;
@@ -33,7 +35,8 @@ void add_to_gv(Geomview_stream& gv, InputIterator begin, InputIterator end);
 
 int main(int argc, char* argv[]) {
   const unsigned int N = 10;
-  Random_points_iterator rpit(1.0);
+  CGAL::Random rand(42);
+  Random_points_iterator rpit(1.0, rand);
   std::vector<Point_3> pts(N_Random_points_iterator(rpit,0), N_Random_points_iterator(N));
   WSPD wspd(3, 1.0, pts.begin(), pts.end());
   Geomview_stream gv(CGAL::Bbox_3(-1, -1, -1, 1, 1, 1));

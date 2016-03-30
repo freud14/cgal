@@ -20,8 +20,9 @@ typedef typename WSPD::Split_tree Split_tree;
 
 int main(int argc, char* argv[]) {
   const unsigned int D = 4;
-  const unsigned int N = 10000;
-  Random_points_iterator rpit(D, 1.0);
+  const unsigned int N = 100000;
+  CGAL::Random rand(42);
+  Random_points_iterator rpit(D, 1.0, rand);
   std::vector<Point_d> pts;
   pts.reserve(N);
   for(int i = 0; i < N; i++) {
