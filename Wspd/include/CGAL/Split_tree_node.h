@@ -22,19 +22,18 @@
 #include <CGAL/Splitters.h>
 #include <CGAL/constructions_d.h>
 #include <vector>
+#include <CGAL/Point_container.h>
 
 namespace CGAL {
 
 template <class Traits>
-class Split_tree;
-
-template <class Traits>
 class Split_tree_node {
-  typedef typename Split_tree<Traits>::Node                          Node;
-  typedef typename Split_tree<Traits>::Point_d                       Point_d;
-  typedef typename Split_tree<Traits>::Iso_box_d                     Iso_box_d;
+public:
+  typedef Split_tree_node<Traits>                                    Node;
+  typedef typename Traits::Point_d                                   Point_d;
+  typedef typename Traits::Iso_box_d                                 Iso_box_d;
   typedef typename Traits::Sphere_d                                  Sphere_d;
-  typedef typename Split_tree<Traits>::Point_container               Point_container;
+  typedef CGAL::Point_container<Traits>                              Point_container;
 
   typedef typename Traits::FT                                        FT;
   typedef typename internal::Get_dimension_tag<Traits>::Dimension    D;
@@ -43,10 +42,6 @@ class Split_tree_node {
   typedef typename Splitter::Separator                               Separator;
 
 public:
-  Split_tree_node(int d_, Traits traits_) :
-        traits(traits_), container(d_, traits_), d(d_), left_child(NULL), right_child(NULL),
-        bbox_computed(false), circle_computed(false), center_computed(false), squared_radius_computed(false) { }
-
   Split_tree_node(int d_, Point_container container_, Traits traits_) :
         traits(traits_), container(d_, container_.begin(), container_.end(), traits_), d(d_),
         bbox_computed(false), circle_computed(false), center_computed(false), squared_radius_computed(false) {

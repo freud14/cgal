@@ -30,20 +30,20 @@ namespace CGAL {
 template <class Traits>
 class WSPD {
 public:
-  typedef CGAL::Split_tree<Traits>                             Split_tree;
+  typedef CGAL::Split_tree<Traits>                                   Split_tree;
 
-  typedef typename CGAL::Split_tree<Traits>::Iso_box_d         Iso_box_d;
-  typedef typename CGAL::Split_tree<Traits>::Point_d           Point_d;
-  typedef typename CGAL::Split_tree<Traits>::Node              Node;
-  typedef typename std::pair<const Node*, const Node*>         Well_separated_pair;
-  typedef typename std::vector<Well_separated_pair>            Well_separated_pair_decomposition;
-  typedef typename Well_separated_pair_decomposition::iterator Well_separated_pair_iterator;
+  typedef typename Traits::Iso_box_d                                 Iso_box_d;
+  typedef typename Traits::Point_d                                   Point_d;
+  typedef typename Split_tree::Node                                  Node;
+  typedef typename std::pair<const Node*, const Node*>               Well_separated_pair;
+  typedef typename std::vector<Well_separated_pair>                  Well_separated_pair_decomposition;
+  typedef typename Well_separated_pair_decomposition::const_iterator Well_separated_pair_iterator;
 
-  typedef typename std::vector<Point_d>                        Point_vector;
-  typedef typename Point_vector::iterator                      Point_vector_iterator;
+  typedef typename std::vector<Point_d>                              Point_vector;
+  typedef typename Point_vector::const_iterator                      Point_iterator;
 
-  typedef typename Traits::Vector_d                            Vector_d;
-  typedef typename Traits::FT                                  FT;
+  typedef typename Traits::Vector_d                                  Vector_d;
+  typedef typename Traits::FT                                        FT;
 
   WSPD(int d, FT separation_ratio) : s(separation_ratio), computed_split_tree(d), computed(true) { }
 
@@ -79,7 +79,6 @@ public:
     computed = false;
   }
 
-  template <class InputIterator>
   void clear() {
     points.clear();
     computed_split_tree.clear();
@@ -87,7 +86,7 @@ public:
     computed = true;
   }
 
-  const Split_tree& split_tree() {
+  const Split_tree& split_tree() const {
     return computed_split_tree;
   }
 
@@ -101,11 +100,11 @@ public:
     return wspd.end();
   }
 
-  Point_vector_iterator points_begin() const {
+  Point_iterator points_begin() const {
     return points.begin();
   }
 
-  Point_vector_iterator points_end() const {
+  Point_iterator points_end() const {
     return points.end();
   }
 
@@ -113,8 +112,6 @@ public:
     compute();
     return wspd.size();
   }
-
-  ~WSPD() { }
 private:
   void compute(const Node* u) const {
     if(u != NULL && !u->is_leaf()) {

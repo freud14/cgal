@@ -20,7 +20,6 @@
 #ifndef CGAL_SPLIT_TREE_H
 #define CGAL_SPLIT_TREE_H
 #include <CGAL/Split_tree_node.h>
-#include <CGAL/Point_container.h>
 #include <vector>
 
 namespace CGAL {
@@ -31,10 +30,10 @@ public:
   typedef Split_tree_node<Traits>                                           Node;
   typedef typename Traits::Point_d                                          Point_d;
   typedef typename Traits::Iso_box_d                                        Iso_box_d;
-  typedef typename CGAL::Point_container<Traits>                            Point_container;
+  typedef typename Node::Point_container                                    Point_container;
 
   typedef std::vector<Iso_box_d>                                            Bounding_box_vector;
-  typedef typename Bounding_box_vector::iterator                            Bounding_box_iterator;
+  typedef typename Bounding_box_vector::const_iterator                      Bounding_box_iterator;
 private:
   typedef std::vector<Point_d>                                              Point_vector;
   typedef std::vector<const Point_d*>                                       Point_ptr_vector;
@@ -70,55 +69,6 @@ public:
     return *this;
   }
 
-  void compute_bounding_boxes() const {
-    compute();
-    if(!bbox_computed) {
-      bounding_boxes.clear();
-      compute_bounding_boxes(tree_root);
-      bbox_computed = true;
-    }
-  }
-
-  Bounding_box_iterator bounding_box_begin() const {
-    compute_bounding_boxes();
-    return bounding_boxes.begin();
-  }
-
-  Bounding_box_iterator bounding_box_end() const {
-    compute_bounding_boxes();
-    return bounding_boxes.end();
-  }
-
-  const Node* root() const {
-    compute();
-    return tree_root;
-  }
-
-  template <class InputIterator>
-  void set(int d_, InputIterator begin, InputIterator end) {
-    d = d_;
-    points.assign(begin, end);
-    invalidate_cache();
-  }
-
-  template <class InputIterator>
-  void add(int d_, InputIterator begin, InputIterator end) {
-    CGAL_assertion(points.size() == 0 || d == d_);
-    d = d_;
-    points.insert(points.end(), begin, end);
-    invalidate_cache();
-  }
-
-
-  void clear() {
-    points.clear();
-    p_vec.clear();
-    bounding_boxes.clear();
-    delete_root();
-    computed = true;
-    bbox_computed = true;
-  }
-
   void compute() const {
     if(!computed) {
       delete_root();
@@ -130,6 +80,52 @@ public:
       tree_root = new Node(d, root_container, traits);
       computed = true;
     }
+  }
+
+  void compute_bounding_boxes() const {
+    compute();
+    if(!bbox_computed) {
+      bounding_boxes.clear();
+      compute_bounding_boxes(tree_root);
+      bbox_computed = true;
+    }
+  }
+
+  template <class InputIterator>
+  void set(int d_, InputIterator begin, InputIterator end) {
+    d = d_;
+    points.assign(begin, end);
+    invalidate_cache();
+  }
+
+  template <class InputIterator>
+  void add(InputIterator begin, InputIterator end) {
+    points.insert(points.end(), begin, end);
+    invalidate_cache();
+  }
+
+  void clear() {
+    points.clear();
+    p_vec.clear();
+    bounding_boxes.clear();
+    delete_root();
+    computed = true;
+    bbox_computed = true;
+  }
+
+  const Node* root() const {
+    compute();
+    return tree_root;
+  }
+
+  Bounding_box_iterator bounding_box_begin() const {
+    compute_bounding_boxes();
+    return bounding_boxes.begin();
+  }
+
+  Bounding_box_iterator bounding_box_end() const {
+    compute_bounding_boxes();
+    return bounding_boxes.end();
   }
 private:
   void compute_bounding_boxes(const Node* node) const {
