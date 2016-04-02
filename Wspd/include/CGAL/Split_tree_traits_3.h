@@ -27,31 +27,15 @@ namespace CGAL {
   class Split_tree_traits_3 : public Search_traits_3<Kernel> {
   public:
     typedef Kernel K;
-    typedef typename K::Vector_3 Vector_d;
-    typedef typename K::RT RT;
+    typedef typename Kernel::Vector_3 Vector_d;
 
-    template <class K_>
+  private:
+    template <class K>
     class Construct_sphere {
     public:
-      typedef typename K_::Sphere_3 Sphere_3;
-      typedef typename K_::Point_3 Point_3;
-      typedef typename K_::FT FT;
-      template<class InputIterator>
-      Sphere_3 operator()(int d, InputIterator first, InputIterator last) const {
-        CGAL_assertion(d == 3);
-        Point_3 p = *first++;
-        Point_3 q = *first++;
-        Point_3 r = *first++;
-        Point_3 s = *first++;
-        if(p != q && q != r && r != s) {
-          CGAL_assertion(!CGAL::coplanar(p, q, r, s));
-          return Sphere_3(p, q, r, s);
-        }
-        else {
-          return Sphere_3(p);
-        }
-      }
-
+      typedef typename K::Sphere_3 Sphere_3;
+      typedef typename K::Point_3 Point_3;
+      typedef typename K::FT FT;
       Sphere_3 operator()(int d, const Point_3& a, const Point_3& b) const {
         CGAL_assertion(d == 3);
         Point_3 center = CGAL::midpoint(a, b);
@@ -60,11 +44,11 @@ namespace CGAL {
       }
     };
 
-    template <class K_>
+    template <class K>
     class Construct_point {
     public:
-      typedef typename K_::Point_3 Point_3;
-      typedef typename K_::FT FT;
+      typedef typename K::Point_3 Point_3;
+      typedef typename K::FT FT;
       template<class InputIterator>
       Point_3 operator()(int d, InputIterator first, InputIterator last) const {
         CGAL_assertion(d == 3);
@@ -74,13 +58,14 @@ namespace CGAL {
         return Point_3(x, y, z);
       }
     };
+  public:
+    typedef Construct_sphere<Kernel> Construct_sphere_d;
+    typedef Construct_point<Kernel> Construct_point_d;
 
-    typedef Construct_sphere<K> Construct_sphere_d;
     Construct_sphere_d construct_sphere_d_object() const {
       return Construct_sphere_d();
     }
 
-    typedef Construct_point<K> Construct_point_d;
     Construct_point_d construct_point_d_object() const {
       return Construct_point_d();
     }

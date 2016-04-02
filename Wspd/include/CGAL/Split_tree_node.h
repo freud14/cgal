@@ -34,7 +34,6 @@ class Split_tree_node {
   typedef typename Split_tree<Traits>::Point_d                       Point_d;
   typedef typename Split_tree<Traits>::Iso_box_d                     Iso_box_d;
   typedef typename Traits::Sphere_d                                  Sphere_d;
-  typedef typename Traits::Vector_d                                  Vector_d;
   typedef typename Split_tree<Traits>::Point_container               Point_container;
 
   typedef typename Traits::FT                                        FT;
@@ -100,8 +99,8 @@ public:
         min.push_back(kdbox.min_coord(i));
         max.push_back(kdbox.max_coord(i));
       }
-      bbox = Iso_box_d(traits.construct_point_d_object()(d, min.begin(), min.end()),
-                        traits.construct_point_d_object()(d, max.begin(), max.end()));
+      bbox = construct_iso_box_d(construct_point_d(d, min.begin(), min.end()),
+                        construct_point_d(d, max.begin(), max.end()));
       bbox_computed = true;
     }
     return bbox;
@@ -110,7 +109,7 @@ public:
   Sphere_d enclosing_circle() const {
     if(!circle_computed) {
       Iso_box_d bbox = bounding_box();
-      circle = traits.construct_sphere_d_object()(d, bbox.min(), bbox.max());
+      circle = construct_sphere_d(d, bbox.min(), bbox.max());
       circle_computed = true;
     }
     return circle;
@@ -153,6 +152,10 @@ private:
   mutable Point_d center_;
   mutable bool squared_radius_computed;
   mutable FT sqradius;
+
+  typename Traits::Construct_iso_box_d construct_iso_box_d;
+  typename Traits::Construct_sphere_d construct_sphere_d;
+  typename Traits::Construct_point_d construct_point_d;
 };
 
 } // End namespace

@@ -36,5 +36,6 @@ int main(int argc, char* argv[]) {
   }*/
 
   std::cout << wspd.size() << std::endl;
+  std::cout << (wspd.size() == 9392739 ? "true" : "false") << std::endl;
   return 0;
 }

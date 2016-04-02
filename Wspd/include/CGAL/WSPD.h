@@ -42,7 +42,6 @@ public:
   typedef typename std::vector<Point_d>                        Point_vector;
   typedef typename Point_vector::iterator                      Point_vector_iterator;
 
-  typedef typename Traits::Sphere_d                            Sphere_d;
   typedef typename Traits::Vector_d                            Vector_d;
   typedef typename Traits::FT                                  FT;
 

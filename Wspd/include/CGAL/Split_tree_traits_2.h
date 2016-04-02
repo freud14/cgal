@@ -27,29 +27,15 @@ namespace CGAL {
   class Split_tree_traits_2 : public Search_traits_2<Kernel> {
   public:
     typedef Kernel K;
-    typedef typename K::Vector_2 Vector_d;
+    typedef typename Kernel::Vector_2 Vector_d;
 
-    template <class K_>
+  private:
+    template <class K>
     class Construct_sphere {
     public:
-      typedef typename K_::Circle_2 Circle_2;
-      typedef typename K_::Point_2 Point_2;
-      typedef typename K_::FT FT;
-      template<class InputIterator>
-      Circle_2 operator()(int d, InputIterator first, InputIterator last) const {
-        CGAL_assertion(d == 2);
-        Point_2 p = *first++;
-        Point_2 q = *first++;
-        Point_2 r = *first++;
-        if(p != q && q != r) {
-          assert(!CGAL::collinear(p, q, r));
-          return Circle_2(p, q, r);
-        }
-        else {
-          return Circle_2(p);
-        }
-      }
-
+      typedef typename K::Circle_2 Circle_2;
+      typedef typename K::Point_2 Point_2;
+      typedef typename K::FT FT;
       Circle_2 operator()(int d, const Point_2& a, const Point_2& b) const {
         CGAL_assertion(d == 2);
         Point_2 center = CGAL::midpoint(a, b);
@@ -58,11 +44,11 @@ namespace CGAL {
       }
     };
 
-    template <class K_>
+    template <class K>
     class Construct_point {
     public:
-      typedef typename K_::Point_2 Point_2;
-      typedef typename K_::FT FT;
+      typedef typename K::Point_2 Point_2;
+      typedef typename K::FT FT;
       template<class InputIterator>
       Point_2 operator()(int d, InputIterator first, InputIterator last) const {
         CGAL_assertion(d == 2);
@@ -71,13 +57,14 @@ namespace CGAL {
         return Point_2(x, y);
       }
     };
+  public:
+    typedef Construct_sphere<Kernel> Construct_sphere_d;
+    typedef Construct_point<Kernel> Construct_point_d;
 
-    typedef Construct_sphere<K> Construct_sphere_d;
     Construct_sphere_d construct_sphere_d_object() const {
       return Construct_sphere_d();
     }
 
-    typedef Construct_point<K> Construct_point_d;
     Construct_point_d construct_point_d_object() const {
       return Construct_point_d();
     }

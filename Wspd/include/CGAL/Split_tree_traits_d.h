@@ -28,22 +28,19 @@ namespace CGAL {
   class Split_tree_traits_d : public Search_traits_d<Kernel> {
   public:
     typedef Kernel K;
-    typedef typename K::Sphere_d Sphere_d;
-    typedef typename K::Vector_d Vector_d;
+    typedef typename Kernel::Vector_d Vector_d;
+    typedef typename Kernel::Sphere_d Sphere_d;
 
-    template <class K_>
+  private:
+    template <class K>
     class Construct_sphere {
     public:
-      typedef typename K_::Sphere_d Sphere_d;
-      typedef typename K_::Point_d Point_d;
-      typedef typename K_::Aff_transformation_d Aff_transformation_d;
-      typedef typename K_::FT FT;
-      typedef typename K_::RT RT;
-      template<class InputIterator>
-      Sphere_d operator()(int d, InputIterator first, InputIterator last) const {
-        return Sphere_d(d, first, last);
-      }
-
+      typedef typename K::Sphere_d Sphere_d;
+      typedef typename K::Point_d Point_d;
+      typedef typename K::Vector_d Vector_d;
+      typedef typename K::Aff_transformation_d Aff_transformation_d;
+      typedef typename K::FT FT;
+      typedef typename K::RT RT;
       Sphere_d operator()(int d, const Point_d& a, const Point_d& b) const {
         std::vector<Point_d> points_on_sphere;
         points_on_sphere.reserve(d + 1);
@@ -75,23 +72,24 @@ namespace CGAL {
       }
     };
 
-    template <class K_>
+    template <class K>
     class Construct_point {
     public:
-      typedef typename K_::Point_d Point_d;
-      typedef typename K_::FT FT;
+      typedef typename K::Point_d Point_d;
+      typedef typename K::FT FT;
       template<class InputIterator>
       Point_d operator()(int d, InputIterator first, InputIterator last) const {
         return Point_d(d, first, last);
       }
     };
+  public:
+    typedef Construct_sphere<Kernel> Construct_sphere_d;
+    typedef Construct_point<Kernel> Construct_point_d;
 
-    typedef Construct_sphere<K> Construct_sphere_d;
     Construct_sphere_d construct_sphere_d_object() const {
       return Construct_sphere_d();
     }
 
-    typedef Construct_point<K> Construct_point_d;
     Construct_point_d construct_point_d_object() const {
       return Construct_point_d();
     }
