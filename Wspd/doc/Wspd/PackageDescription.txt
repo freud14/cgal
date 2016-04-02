@@ -11,33 +11,45 @@
 /// \defgroup PkgWspdTraitsClasses Traits Classes
 /// \ingroup PkgWspd
 
-/// \defgroup PkgWspdMiscellaneous Miscellaneous
-/// \ingroup PkgWspd
-
 /*!
 \addtogroup PkgWspd
 \todo check generated documentation
 
-\cgalPkgDescriptionBegin{PACKAGE NAME,PkgWspdSummary}
+\cgalPkgDescriptionBegin{Well-separated pair decomposition,PkgWspdSummary}
 \cgalPkgPicture{pkg-small.png}
 
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{PACKAGE AUTHOR}
-\cgalPkgDesc{PACKAGE DESCRIPTION.
-The package provides ... }
+\cgalPkgAuthors{Frédérik Paradis}
+\cgalPkgDesc{This package provides classes for computing split trees and well-separated pair decomposition in 2, 3 and d Dimension.}
 \cgalPkgManuals{Chapter_PACKAGE_NAME,PkgWspd}
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin
-\cgalPkgSince{X.X}
-\cgalPkgDependsOn{\ref PkgDEPENDENCY}
+\cgalPkgSince{4.9}
+\cgalPkgDependsOn{\ref PkgSpatialSearchingDSummary}
 \cgalPkgBib{cgal:x-x}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
-\cgalPkgDemo{DEMO 1,demo1.zip}
-\cgalPkgDemo{DEMO 2,demo2.zip}
 \cgalPkgShortInfoEnd
 
 \cgalPkgDescriptionEnd
+
+Two subsets \f$A, B \subseteq \mathbb{R}^d\f$ are well-separated with respect to
+\f$s > 0\f$ iff there are two \f$d\f$-dimensional balls \f$C_A\f$ and \f$C_B\f$
+with the same radius \f$\rho\f$ respectively enclosing \f$A\f$ and \f$B\f$ such
+that the distance between \f$C_A\f$ and \f$C_B\f$ is greater than or equal to
+\f$s\f$ times \f$\rho\f$. A Well-Separated Pair Decomposition (%WSPD) of a point
+set \f$S \subseteq \mathbb{R}^d\f$  is  set of pairs
+\f$\{\{A_1, B_1\}, \{A_2, B_2\}, \ldots, \{A_m, B_m\}\}\f$ such that, for each
+pair \f$\{A_i, B_i\}\f$, \f$1 \leq i \leq m\f$, \f$A_i\f$ and \f$B_i\f$ are
+well-separated, and for any distinct points \f$p\f$ and \f$q\f$ in \f$S\f$, there
+is a unique pair \f$\{A_i, B_i\}\f$, \f$1 \leq i \leq m\f$, so that
+
+ - \f$p \in A_i\f$ and \f$q \in B_i\f$, or
+ - \f$q \in A_i\f$ and \f$p \in B_i\f$.
+
+\cgal provides functions for producing a Well-Separated Pair Decomposition of a
+point set. There are several ways to compute a %WSPD. The one used by this
+package is via the split tree.
 
 
 \cgalClassifedRefPages
@@ -51,5 +63,11 @@ The package provides ... }
 - `CGAL::Split_tree_traits_2<Kernel>`
 - `CGAL::Split_tree_traits_3<Kernel>`
 - `CGAL::Split_tree_traits_d<Kernel>`
+
+## Algorithm Classes ##
+
+- `CGAL::WSPD<Traits>`
+- `CGAL::Split_tree<Traits>`
+- `CGAL::Split_tree_node<Traits>`
 
 */
