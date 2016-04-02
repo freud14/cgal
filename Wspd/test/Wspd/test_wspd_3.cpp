@@ -44,7 +44,7 @@ int main(int argc, char* argv[]) {
   add_to_gv(gv, pts.begin(), pts.end());
 
   for(Well_separated_pair_iterator it = wspd.wspd_begin(); it < wspd.wspd_end(); it++) {
-    Well_separated_pair &pair = *it;
+    const Well_separated_pair &pair = *it;
     Sphere_3 s1 = pair.first->enclosing_circle();
     Sphere_3 s2 = pair.second->enclosing_circle();
     if(!pair.first->is_leaf()) {
