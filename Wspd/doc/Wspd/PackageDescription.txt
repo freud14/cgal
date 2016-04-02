@@ -1,6 +1,7 @@
 // PRETTY PACKAGE NAME should equal the project title in Doxyfile.in
 
 /// \defgroup PkgWspd Well-separated pair decomposition Reference
+
 /// \defgroup PkgWspdConcepts Concepts
 /// \ingroup PkgWspd
 
@@ -37,5 +38,18 @@ The package provides ... }
 \cgalPkgShortInfoEnd
 
 \cgalPkgDescriptionEnd
+
+
+\cgalClassifedRefPages
+
+## Concepts ##
+
+- `SplitTreeTraits`
+
+## Traits Classes ##
+
+- `CGAL::Split_tree_traits_2<Kernel>`
+- `CGAL::Split_tree_traits_3<Kernel>`
+- `CGAL::Split_tree_traits_d<Kernel>`
 
 */

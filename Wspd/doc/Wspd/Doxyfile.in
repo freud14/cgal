@@ -1,4 +1,3 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Well-separated pair decomposition"
-INPUT        = ${CMAKE_SOURCE_DIR}/Wspd/doc/Wspd/ \
-               ${CMAKE_SOURCE_DIR}/Wspd/include
+#INPUT        = ${CMAKE_SOURCE_DIR}/Wspd/doc/Wspd/
