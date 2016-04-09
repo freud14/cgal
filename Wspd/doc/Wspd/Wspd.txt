@@ -27,11 +27,22 @@ This chapter describes the functions provided in \cgal for producing a
 Well-Separated Pair Decomposition of a point set. There are several ways to
 compute a %WSPD. The one used by this package is via the split tree.
 
-\section secmyexamples Examples
+\section WspdExamples Examples
 
-\subsection myFirstExample First Example
+\subsection dDimensionExample Example of WSPD in d dimensions
 
-The following example shows ...
+The following example shows the computation of the %WSPD of a point set of
+100,000 random points.
+
+\cgalExample{Wspd/example_wspd_d.cpp}
+
+\subsection worstCaseExample Split tree worst case
+
+The following example shows the computation of the %WSPD for the worst case
+scenario of the split tree where the points are on same line and the
+\f$x\f$-coordinates are power of two.
+
+\cgalExample{Wspd/example_wspd_worst_case.cpp}
 
 */
 } /* namespace CGAL */

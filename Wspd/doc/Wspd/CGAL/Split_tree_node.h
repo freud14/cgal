@@ -66,12 +66,12 @@ Split_tree_node(const Split_tree_node& node);
 /// @{
 
 /*!
-Returns a pointer to the left child of the node.
+Returns a pointer to the left child of the node or `NULL` if the node is a leaf.
 */
 inline const Node* left() const;
 
 /*!
-Returns a pointer to the right child of the node.
+Returns a pointer to the right child of the node or `NULL` if the node is a leaf.
 */
 inline const Node* right() const;
 

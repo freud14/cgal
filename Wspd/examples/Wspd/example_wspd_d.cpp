@@ -30,12 +30,13 @@ int main(int argc, char* argv[]) {
   }
   WSPD wspd(D, 1.0, pts.begin(), pts.end());
 
+  // Uncomment to print the size of the sets of each pair in the WSPD.
   /*for(Well_separated_pair_iterator it = wspd.wspd_begin(); it < wspd.wspd_end(); it++) {
     Well_separated_pair &pair = *it;
     std::cout << "(" << pair.first->point_container().size() << ", " << pair.second->point_container().size() << ")" << std::endl;
   }*/
 
+  // Prints the number of pairs in the WSPD.
   std::cout << wspd.size() << std::endl;
-  std::cout << (wspd.size() == 9392739 ? "true" : "false") << std::endl;
   return 0;
 }
