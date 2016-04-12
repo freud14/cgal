@@ -29,7 +29,9 @@ split_tree__batch_test(int d, const Traits& traits)
 {
   typedef typename Traits::Point_d Point_d;
   typedef typename Traits::Iso_box_d Iso_box_d;
+  typedef typename Traits::FT FT;
   typedef CGAL::Split_tree<Traits> Split_tree;
+  typedef typename Split_tree::Node Node;
 
   Point_d zero_point = get_point_d(d, 0, 0, traits);
   Iso_box_d zero_rect(zero_point, zero_point);
@@ -117,6 +119,41 @@ split_tree__batch_test(int d, const Traits& traits)
   Iso_box_d second_possibility_right_bbox(get_point_d(d, 4, 0, traits), get_point_d(d, 4, 0, traits));
   assert((in<Traits>(ambiguous_split_points_bboxes, first_possibility_left_bbox) && in<Traits>(ambiguous_split_points_bboxes, first_possibility_right_bbox))
           || (in<Traits>(ambiguous_split_points_bboxes, second_possibility_left_bbox) && in<Traits>(ambiguous_split_points_bboxes, second_possibility_left_bbox)));
+
+
+  // Construction of a linear split tree where each dimension in split once
+  std::vector<Point_d> points_d;
+  std::vector< std::vector<FT> > corners_coord(d, std::vector<FT>(d, 0));
+  for(int i = 0; i < d; i++) {
+    for(int j = i; j < d; j++) {
+      corners_coord[j][i] = i;
+    }
+
+    std::vector<FT> coord(d, 0);
+    coord[i] = i;
+    points_d.push_back(traits.construct_point_d_object()(d, coord.begin(), coord.end()));
+  }
+  std::vector<Point_d> corners;
+  for(int i = 0; i < d; i++) {
+    corners.push_back(traits.construct_point_d_object()(d, corners_coord[i].begin(), corners_coord[i].end()));
+  }
+  Split_tree points_d_split_tree(d, points_d.begin(), points_d.end());
+  std::vector<Iso_box_d> points_d_bboxes(points_d_split_tree.bounding_box_begin(), points_d_split_tree.bounding_box_end());
+  const Node* current_node = points_d_split_tree.root();
+  for(int i = d-1; i >= 0; i--) {
+    Iso_box_d points_d_bbox(get_point_d(d, 0, 0, traits), corners[i]);
+    assert(in<Traits>(points_d_bboxes, points_d_bbox));
+
+    assert(current_node->bounding_box() == points_d_bbox);
+    if(i != 0) {
+      assert(current_node->right() != NULL);
+      assert(current_node->right()->is_leaf());
+    }
+    else {
+      assert(current_node->is_leaf());
+    }
+    current_node = current_node->left();
+  }
 
   std::cout << "Testing split tree...done" << std::endl;
   return true;
