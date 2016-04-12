@@ -142,7 +142,10 @@ void WSPDGraphicsItem<K>::paint(QPainter *painter,
   if(draw_bounding_boxes) {
     const Split_tree& tree = wspd->split_tree();
     for(Bounding_box_iterator it = tree.bounding_box_begin(); it < tree.bounding_box_end(); it++) {
-      painterostream << *it;
+      Iso_rectangle_2 bbox = *it;
+      if(bbox.min() != bbox.max()) {
+        painterostream << bbox;
+      }
     }
   }
 }

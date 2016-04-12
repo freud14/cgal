@@ -72,7 +72,10 @@ void Wspd_ipelet::protected_run(int fn)
     {
       Split_tree tree(2, lst.begin(), lst.end());
       for(Bounding_box_iterator it = tree.bounding_box_begin(); it < tree.bounding_box_end(); it++) {
-        draw_in_ipe(*it);
+        Iso_rectangle_2 bbox = *it;
+        if(bbox.min() != bbox.max()) {
+          draw_in_ipe(bbox);
+        }
       }
       group_selected_objects_();
       return;

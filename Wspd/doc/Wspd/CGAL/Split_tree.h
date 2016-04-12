@@ -110,7 +110,8 @@ Removes all points from the split tree.
 void clear();
 
 /*!
-Returns a pointer to the root node of the split tree.
+Returns a pointer to the root node of the split tree or NULL if the point set of
+the split tree is empty.
 */
 const Node* root() const;
 

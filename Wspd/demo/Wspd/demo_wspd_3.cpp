@@ -63,7 +63,10 @@ int main(int argc, char* argv[]) {
   add_to_gv(gv, pts.begin(), pts.end());
   const Split_tree& tree = wspd.split_tree();
   for(Bounding_box_iterator it = tree.bounding_box_begin(); it < tree.bounding_box_end(); it++) {
-    gv << (*it).bbox();
+    Iso_cuboid_3 bbox = *it;
+    if(bbox.min() != bbox.max()) {
+      gv << bbox.bbox();
+    }
   }
 
   std::cin >> ch;

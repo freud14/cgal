@@ -46,11 +46,13 @@ public:
         traits(traits_), container(d_, container_.begin(), container_.end(), traits_), d(d_),
         bbox_computed(false), circle_computed(false), center_computed(false), squared_radius_computed(false) {
     if(container_.size() >= 2) {
-      Point_container left_container(d, container_.begin(), container_.end(), traits);
-      Point_container right_container(d, traits);
+      Point_container left_container(d, traits);
+      Point_container right_container(d, container_.begin(), container_.end(), traits);
       Splitter split;
       Separator sep;
-      split(sep, left_container, right_container);
+      // When Point_container splits itself, it keep the upper half of the points
+      // hence the order of right_container and left_container on this functior call.
+      split(sep, right_container, left_container);
       left_child = new Node(d, left_container, traits);
       right_child = new Node(d, right_container, traits);
     }
@@ -87,9 +89,9 @@ public:
 
   Iso_box_d bounding_box() const {
     if(!bbox_computed) {
-      const Kd_tree_rectangle<FT, D>& kdbox = container.bounding_box();
       std::vector<FT> min;
       std::vector<FT> max;
+      const Kd_tree_rectangle<FT, D>& kdbox = container.bounding_box();
       for(int i = 0; i < d; i++) {
         min.push_back(kdbox.min_coord(i));
         max.push_back(kdbox.max_coord(i));

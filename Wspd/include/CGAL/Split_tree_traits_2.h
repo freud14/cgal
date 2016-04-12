@@ -20,6 +20,7 @@
 #ifndef CGAL_SPLIT_TREE_TRAITS_2_H
 #define CGAL_SPLIT_TREE_TRAITS_2_H
 #include <CGAL/Search_traits_2.h>
+#include <CGAL/constructions_d.h>
 
 namespace CGAL {
 

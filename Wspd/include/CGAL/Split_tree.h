@@ -72,12 +72,14 @@ public:
   void compute() const {
     if(!computed) {
       delete_root();
-      p_vec.clear();
-      for(int i = 0; i < points.size(); i++) {
-        p_vec.push_back(&points[i]);
+      if(points.size() > 0) {
+        p_vec.clear();
+        for(int i = 0; i < points.size(); i++) {
+          p_vec.push_back(&points[i]);
+        }
+        Point_container root_container(d, p_vec.begin(), p_vec.end(), traits);
+        tree_root = new Node(d, root_container, traits);
       }
-      Point_container root_container(d, p_vec.begin(), p_vec.end(), traits);
-      tree_root = new Node(d, root_container, traits);
       computed = true;
     }
   }
@@ -129,7 +131,7 @@ public:
   }
 private:
   void compute_bounding_boxes(const Node* node) const {
-    if(!node->is_leaf()) {
+    if(node != NULL) {
       bounding_boxes.push_back(node->bounding_box());
       compute_bounding_boxes(node->left());
       compute_bounding_boxes(node->right());
@@ -137,7 +139,7 @@ private:
   }
 
   void delete_root() const {
-    if(tree_root) delete tree_root;
+    delete tree_root;
     tree_root = NULL;
   }
 
