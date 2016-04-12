@@ -29,7 +29,6 @@ namespace CGAL {
   public:
     typedef Kernel K;
     typedef typename Kernel::Vector_d Vector_d;
-    typedef typename Kernel::Sphere_d Sphere_d;
 
   private:
     template <class K>
