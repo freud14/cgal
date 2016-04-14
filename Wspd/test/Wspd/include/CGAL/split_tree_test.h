@@ -1,5 +1,5 @@
-#ifndef TEST_SPLIT_TREE_2
-#define TEST_SPLIT_TREE_2
+#ifndef SPLIT_TREE_TEST
+#define SPLIT_TREE_TEST
 
 #include <cassert>
 #include <iostream>
@@ -32,9 +32,6 @@ split_tree__batch_test(int d, const Traits& traits)
   typedef typename Traits::FT FT;
   typedef CGAL::Split_tree<Traits> Split_tree;
   typedef typename Split_tree::Node Node;
-
-  Point_d zero_point = get_point_d(d, 0, 0, traits);
-  Iso_box_d zero_rect(zero_point, zero_point);
 
   Split_tree empty_split_tree(d);
   assert(empty_split_tree.root() == NULL);
@@ -181,10 +178,11 @@ split_tree__batch_test(int d, const Traits& traits)
     }
     points_linear_current_node = points_linear_current_node->left();
   }
+
   std::cout << "Testing split tree...done" << std::endl;
   return true;
 }
 
 } //namespace CGAL
 
-#endif // TEST_SPLIT_TREE_2
+#endif // SPLIT_TREE_TEST

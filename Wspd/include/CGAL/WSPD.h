@@ -48,7 +48,7 @@ public:
   WSPD(int d, FT separation_ratio) : s(separation_ratio), computed_split_tree(d), computed(true) { }
 
   template <class InputIterator>
-  WSPD(int d, FT separation_ratio, InputIterator begin, InputIterator end) : s(separation_ratio), computed_split_tree(d, begin, end), computed(false) { }
+  WSPD(int d, FT separation_ratio, InputIterator begin, InputIterator end) : s(separation_ratio), computed_split_tree(d, begin, end), points(begin, end), computed(false) { }
 
   virtual void compute() const {
     if(!computed) {
