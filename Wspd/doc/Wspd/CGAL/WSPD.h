@@ -41,7 +41,7 @@ typedef typename Split_tree::Node                                  Node;
 A well-separated pair as a pair of node of the split tree with type
  `std::pair<const Node*, const Node*>`.
 */
-typedef typename std::pair<const Node*, const Node*>               Well_separated_pair;
+typedef CGAL::Well_separated_pair<Traits>                          Well_separated_pair;
 
 /*!
 An const iterator of `Well_separated_pair`.

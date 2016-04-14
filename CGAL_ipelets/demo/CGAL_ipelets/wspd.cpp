@@ -87,12 +87,12 @@ void Wspd_ipelet::protected_run(int fn)
       WSPD wspd(2, s, lst.begin(), lst.end());
       for(Well_separated_pair_iterator it = wspd.wspd_begin(); it < wspd.wspd_end(); it++) {
         const Well_separated_pair &pair = *it;
-        Circle_2 c1 = pair.first->enclosing_circle();
-        Circle_2 c2 = pair.second->enclosing_circle();
-        if(!pair.first->is_leaf()) {
+        Circle_2 c1 = pair.a()->enclosing_circle();
+        Circle_2 c2 = pair.b()->enclosing_circle();
+        if(!pair.a()->is_leaf()) {
           draw_in_ipe(c1);
         }
-        if(!pair.second->is_leaf()) {
+        if(!pair.b()->is_leaf()) {
           draw_in_ipe(c2);
         }
         draw_in_ipe(segment_between_circles(c1, c2));
@@ -116,7 +116,7 @@ void Wspd_ipelet::protected_run(int fn)
       WSPD wspd(2, s, lst.begin(), lst.end());
       for(Well_separated_pair_iterator it = wspd.wspd_begin(); it < wspd.wspd_end(); it++) {
         const Well_separated_pair &pair = *it;
-        draw_in_ipe(Segment_2(**pair.first->point_container().begin(), **pair.second->point_container().begin()));
+        draw_in_ipe(Segment_2(**pair.a()->point_container().begin(), **pair.b()->point_container().begin()));
       }
       group_selected_objects_();
       return;

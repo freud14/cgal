@@ -33,7 +33,7 @@ int main(int argc, char* argv[]) {
   // Uncomment to print the size of the sets of each pair in the WSPD.
   /*for(Well_separated_pair_iterator it = wspd.wspd_begin(); it < wspd.wspd_end(); it++) {
     Well_separated_pair &pair = *it;
-    std::cout << "(" << pair.first->point_container().size() << ", " << pair.second->point_container().size() << ")" << std::endl;
+    std::cout << "(" << pair.a()->point_container().size() << ", " << pair.b()->point_container().size() << ")" << std::endl;
   }*/
 
   // Prints the number of pairs in the WSPD.

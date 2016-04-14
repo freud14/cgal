@@ -45,12 +45,12 @@ int main(int argc, char* argv[]) {
 
   for(Well_separated_pair_iterator it = wspd.wspd_begin(); it < wspd.wspd_end(); it++) {
     const Well_separated_pair &pair = *it;
-    Sphere_3 s1 = pair.first->enclosing_circle();
-    Sphere_3 s2 = pair.second->enclosing_circle();
-    if(!pair.first->is_leaf()) {
+    Sphere_3 s1 = pair.a()->enclosing_circle();
+    Sphere_3 s2 = pair.b()->enclosing_circle();
+    if(!pair.a()->is_leaf()) {
       gv << s1;
     }
-    if(!pair.second->is_leaf()) {
+    if(!pair.b()->is_leaf()) {
       gv << s2;
     }
     gv << segment_between_spheres(s1, s2);

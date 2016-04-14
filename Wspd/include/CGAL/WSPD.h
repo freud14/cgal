@@ -20,6 +20,7 @@
 #ifndef CGAL_WSPD_H
 #define CGAL_WSPD_H
 #include <CGAL/Split_tree.h>
+#include <CGAL/Well_separated_pair.h>
 #include <CGAL/Point_container.h>
 #include <CGAL/constructions_d.h>
 #include <utility>
@@ -31,19 +32,18 @@ template <class Traits>
 class WSPD {
 public:
   typedef CGAL::Split_tree<Traits>                                   Split_tree;
-
-  typedef typename Traits::Iso_box_d                                 Iso_box_d;
-  typedef typename Traits::Point_d                                   Point_d;
   typedef typename Split_tree::Node                                  Node;
-  typedef typename std::pair<const Node*, const Node*>               Well_separated_pair;
+  typedef CGAL::Well_separated_pair<Traits>                          Well_separated_pair;
   typedef typename std::vector<Well_separated_pair>                  Well_separated_pair_decomposition;
   typedef typename Well_separated_pair_decomposition::const_iterator Well_separated_pair_iterator;
 
-  typedef typename std::vector<Point_d>                              Point_vector;
-  typedef typename Point_vector::const_iterator                      Point_iterator;
-
+  typedef typename Traits::Point_d                                   Point_d;
+  typedef typename Traits::Iso_box_d                                 Iso_box_d;
   typedef typename Traits::Vector_d                                  Vector_d;
   typedef typename Traits::FT                                        FT;
+
+  typedef typename std::vector<Point_d>                              Point_vector;
+  typedef typename Point_vector::const_iterator                      Point_iterator;
 
   WSPD(int d, FT separation_ratio) : s(separation_ratio), computed_split_tree(d), computed(true) { }
 
@@ -123,7 +123,7 @@ private:
 
   void find_pairs(const Node* v, const Node* w) const {
     if(are_well_separated(v, w)) {
-      wspd.push_back(std::make_pair(v,w));
+      wspd.push_back(Well_separated_pair(v,w));
     }
     else {
       if(has_longuest_side(v, w)) {
