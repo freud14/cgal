@@ -155,6 +155,32 @@ split_tree__batch_test(int d, const Traits& traits)
     current_node = current_node->left();
   }
 
+  // Construction of a linear split tree where the same dimension is split again
+  // and again.
+  const int NB_POINTS_LINEAR_SPLIT = 12;
+  std::vector<Point_d> points_linear_split;
+  int current_coord = 1;
+  for(int i = 0; i < NB_POINTS_LINEAR_SPLIT + 1; i++) {
+    points_linear_split.push_back(get_point_d(d, 0, current_coord, traits));
+    current_coord *= 2;
+  }
+  Split_tree points_linear_split_tree(d, points_linear_split.begin(), points_linear_split.end());
+  std::vector<Iso_box_d> points_linear_bboxes(points_linear_split_tree.bounding_box_begin(), points_linear_split_tree.bounding_box_end());
+  const Node* points_linear_current_node = points_linear_split_tree.root();
+  for(int i = NB_POINTS_LINEAR_SPLIT; i >= 0; i--) {
+    Iso_box_d points_linear_bbox(points_linear_split[0], points_linear_split[i]);
+    assert(in<Traits>(points_linear_bboxes, points_linear_bbox));
+
+    assert(points_linear_current_node->bounding_box() == points_linear_bbox);
+    if(i != 0) {
+      assert(points_linear_current_node->right() != NULL);
+      assert(points_linear_current_node->right()->is_leaf());
+    }
+    else {
+      assert(points_linear_current_node->is_leaf());
+    }
+    points_linear_current_node = points_linear_current_node->left();
+  }
   std::cout << "Testing split tree...done" << std::endl;
   return true;
 }
