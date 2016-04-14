@@ -15,7 +15,7 @@
 
 #include <CGAL/CORE_Expr.h>
 
-#include <CGAL/test_split_tree.h>
+#include <CGAL/split_tree_test.h>
 
 int main(int argc, char* argv[])
 {
