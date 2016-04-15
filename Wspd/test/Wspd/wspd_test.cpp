@@ -19,7 +19,6 @@
 #include <CGAL/CORE_Expr.h>
 
 #include <CGAL/wspd_test.h>
-#include <CGAL/WSPD.h>
 
 int main(int argc, char* argv[])
 {
