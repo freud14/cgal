@@ -47,6 +47,28 @@ get_point_d(int d, typename Traits::FT a, typename Traits::FT b, const Traits& t
   return traits.construct_point_d_object()(d, coord.begin(), coord.end());
 }
 
+template <class Traits>
+bool
+test_points(int d, const Traits& traits, const CGAL::WSPD<Traits>& points_wspd)
+{
+  typedef typename CGAL::WSPD<Traits>::Node Node;
+
+  const Node* points_root = points_wspd.split_tree().root();
+  assert(points_wspd.size() == 12);
+  assert(is_pair_in_wspd<Traits>(points_wspd, points_root->right()->left(), points_root->right()->right()));
+  assert(is_pair_in_wspd<Traits>(points_wspd, points_root->right()->right(), points_root->left()->right()));
+  assert(is_pair_in_wspd<Traits>(points_wspd, points_root->left(), points_root->right()->left()));
+  assert(is_pair_in_wspd<Traits>(points_wspd, points_root->left()->left()->left(), points_root->right()->right()));
+  assert(is_pair_in_wspd<Traits>(points_wspd, points_root->left()->left()->right(), points_root->right()->right()));
+  assert(is_pair_in_wspd<Traits>(points_wspd, points_root->left()->right(), points_root->right()->right()));
+  assert(is_pair_in_wspd<Traits>(points_wspd, points_root->left()->left()->left(), points_root->left()->right()));
+  assert(is_pair_in_wspd<Traits>(points_wspd, points_root->left()->left()->right()->left(), points_root->left()->right()));
+  assert(is_pair_in_wspd<Traits>(points_wspd, points_root->left()->left()->right()->right(), points_root->left()->right()));
+  assert(is_pair_in_wspd<Traits>(points_wspd, points_root->left()->left()->left(), points_root->left()->left()->right()->left()));
+  assert(is_pair_in_wspd<Traits>(points_wspd, points_root->left()->left()->right()->left(), points_root->left()->left()->right()->right()));
+  assert(is_pair_in_wspd<Traits>(points_wspd, points_root->left()->left()->right()->right()->left(), points_root->left()->left()->right()->right()->right()));
+}
+
 /*!
   Assumptions on the way the algorithm works are done in these tests (e.g.
   left node is visited before right node in computeWspd).
@@ -110,21 +132,64 @@ wspd__batch_test(int d, const Traits& traits)
   while (input >> x >> y) {
     points.push_back(get_point_d(d, x, y, traits));
   }
+
   WSPD points_wspd(d, 1.4, points.begin(), points.end());
-  const Node* points_root = points_wspd.split_tree().root();
-  assert(points_wspd.size() == 12);
-  assert(is_pair_in_wspd<Traits>(points_wspd, points_root->right()->left(), points_root->right()->right()));
-  assert(is_pair_in_wspd<Traits>(points_wspd, points_root->right()->right(), points_root->left()->right()));
-  assert(is_pair_in_wspd<Traits>(points_wspd, points_root->left(), points_root->right()->left()));
-  assert(is_pair_in_wspd<Traits>(points_wspd, points_root->left()->left()->left(), points_root->right()->right()));
-  assert(is_pair_in_wspd<Traits>(points_wspd, points_root->left()->left()->right(), points_root->right()->right()));
-  assert(is_pair_in_wspd<Traits>(points_wspd, points_root->left()->right(), points_root->right()->right()));
-  assert(is_pair_in_wspd<Traits>(points_wspd, points_root->left()->left()->left(), points_root->left()->right()));
-  assert(is_pair_in_wspd<Traits>(points_wspd, points_root->left()->left()->right()->left(), points_root->left()->right()));
-  assert(is_pair_in_wspd<Traits>(points_wspd, points_root->left()->left()->right()->right(), points_root->left()->right()));
-  assert(is_pair_in_wspd<Traits>(points_wspd, points_root->left()->left()->left(), points_root->left()->left()->right()->left()));
-  assert(is_pair_in_wspd<Traits>(points_wspd, points_root->left()->left()->right()->left(), points_root->left()->left()->right()->right()));
-  assert(is_pair_in_wspd<Traits>(points_wspd, points_root->left()->left()->right()->right()->left(), points_root->left()->left()->right()->right()->right()));
+  test_points(d, traits, points_wspd);
+
+  WSPD ratio_points_wspd(d, 2.0, points.begin(), points.end());
+  ratio_points_wspd.compute();
+  ratio_points_wspd.separation_ratio(1.4);
+  test_points(d, traits, points_wspd);
+  ratio_points_wspd.separation_ratio(1.3);
+  test_points(d, traits, points_wspd);
+
+  WSPD add_points_wspd(d, 1.4);
+  add_points_wspd.add(points.begin(), points.end());
+  test_points(d, traits, add_points_wspd);
+
+  WSPD set_points_wspd(d, 1.4);
+  set_points_wspd.set(d, points.begin(), points.end());
+  test_points(d, traits, set_points_wspd);
+
+  WSPD add_set_points_wspd(d, 1.4);
+  add_set_points_wspd.add(points.begin(), points.end());
+  add_set_points_wspd.compute();
+  add_set_points_wspd.set(d, points.begin(), points.end());
+  test_points(d, traits, add_set_points_wspd);
+
+  WSPD set_add_points_wspd(d, 1.4);
+  set_add_points_wspd.set(d, points.begin(), points.begin() + 2);
+  set_add_points_wspd.add(points.begin() + 2, points.end());
+  test_points(d, traits, set_add_points_wspd);
+  set_add_points_wspd.clear();
+  set_add_points_wspd.compute();
+  set_add_points_wspd.add(points.begin(), points.end());
+  test_points(d, traits, set_add_points_wspd);
+  set_add_points_wspd.clear();
+  set_add_points_wspd.compute();
+  set_add_points_wspd.set(d, points.begin(), points.end());
+  test_points(d, traits, set_add_points_wspd);
+  set_add_points_wspd.clear();
+  set_add_points_wspd.compute();
+  set_add_points_wspd.set(d, points.begin(), points.begin() + 2);
+  set_add_points_wspd.compute();
+  set_add_points_wspd.add(points.begin() + 2, points.end());
+  test_points(d, traits, set_add_points_wspd);
+
+  WSPD no_compute_set_add_points_wspd(d, 1.4);
+  no_compute_set_add_points_wspd.set(d, points.begin(), points.begin() + 2);
+  no_compute_set_add_points_wspd.add(points.begin() + 2, points.end());
+  test_points(d, traits, set_add_points_wspd);
+  no_compute_set_add_points_wspd.clear();
+  no_compute_set_add_points_wspd.add(points.begin(), points.end());
+  test_points(d, traits, set_add_points_wspd);
+  no_compute_set_add_points_wspd.clear();
+  no_compute_set_add_points_wspd.set(d, points.begin(), points.end());
+  test_points(d, traits, set_add_points_wspd);
+  no_compute_set_add_points_wspd.clear();
+  no_compute_set_add_points_wspd.set(d, points.begin(), points.begin() + 2);
+  no_compute_set_add_points_wspd.add(points.begin() + 2, points.end());
+  test_points(d, traits, no_compute_set_add_points_wspd);
 
   std::cout << "Testing WSPD...done" << std::endl;
   return true;

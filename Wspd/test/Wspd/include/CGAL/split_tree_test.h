@@ -25,6 +25,25 @@ get_point_d(int d, typename Traits::FT a, typename Traits::FT b, const Traits& t
 
 template <class Traits>
 bool
+test_points(int d, const Traits& traits, const CGAL::Split_tree<Traits>& points_split_tree, const std::vector<typename Traits::Point_d>& points)
+{
+  typedef typename Traits::Iso_box_d Iso_box_d;
+  typedef CGAL::Split_tree<Traits> Split_tree;
+  typedef typename Split_tree::Node Node;
+
+  std::vector<Iso_box_d> points_bboxes(points_split_tree.bounding_box_begin(), points_split_tree.bounding_box_end());
+  const Node* points_root = points_split_tree.root();
+  assert(points_bboxes.size() == 13);
+  assert(points_root->bounding_box() == Iso_box_d(get_point_d(d, 10, 30, traits), get_point_d(d, 464, 411, traits)));
+  assert(points_root->right()->bounding_box() == Iso_box_d(get_point_d(d, 328, 30, traits), get_point_d(d, 464, 367, traits)));
+  assert(points_root->left()->bounding_box() == Iso_box_d(points[6], points[4]));
+  assert(points_root->left()->left()->bounding_box() == Iso_box_d(points[6], points[2]));
+  assert(points_root->left()->left()->right()->bounding_box() == Iso_box_d(points[0], points[2]));
+  assert(points_root->left()->left()->right()->right()->bounding_box() == Iso_box_d(points[1], points[2]));
+}
+
+template <class Traits>
+bool
 split_tree__batch_test(int d, const Traits& traits)
 {
   typedef typename Traits::Point_d Point_d;
@@ -178,6 +197,50 @@ split_tree__batch_test(int d, const Traits& traits)
     }
     points_linear_current_node = points_linear_current_node->left();
   }
+
+
+  std::vector<Point_d> points;
+  std::ifstream input("data/points.txt");
+  double x,y;
+  while (input >> x >> y) {
+    points.push_back(get_point_d(d, x, y, traits));
+  }
+  Split_tree points_split_tree(d, points.begin(), points.end());
+  test_points(d, traits, points_split_tree, points);
+
+  Split_tree add_points_split_tree(d);
+  add_points_split_tree.add(points.begin(), points.end());
+  test_points(d, traits, add_points_split_tree, points);
+
+  Split_tree set_points_split_tree(d);
+  set_points_split_tree.set(d, points.begin(), points.end());
+  test_points(d, traits, set_points_split_tree, points);
+
+  Split_tree add_set_points_split_tree(d);
+  add_set_points_split_tree.add(points.begin(), points.end());
+  add_set_points_split_tree.compute();
+  add_set_points_split_tree.set(d, points.begin(), points.end());
+  test_points(d, traits, add_set_points_split_tree, points);
+
+  Split_tree set_add_points_split_tree(d);
+  set_add_points_split_tree.set(d, points.begin(), points.begin() + 2);
+  set_add_points_split_tree.compute();
+  set_add_points_split_tree.add(points.begin() + 2, points.end());
+  test_points(d, traits, set_add_points_split_tree, points);
+  set_add_points_split_tree.clear();
+  set_add_points_split_tree.compute();
+  set_add_points_split_tree.add(points.begin(), points.end());
+  test_points(d, traits, set_add_points_split_tree, points);
+  set_add_points_split_tree.clear();
+  set_add_points_split_tree.compute();
+  set_add_points_split_tree.set(d, points.begin(), points.end());
+  test_points(d, traits, set_add_points_split_tree, points);
+  set_add_points_split_tree.clear();
+  set_add_points_split_tree.compute();
+  set_add_points_split_tree.set(d, points.begin(), points.begin() + 2);
+  set_add_points_split_tree.compute();
+  set_add_points_split_tree.add(points.begin() + 2, points.end());
+  test_points(d, traits, set_add_points_split_tree, points);
 
   std::cout << "Testing split tree...done" << std::endl;
   return true;
