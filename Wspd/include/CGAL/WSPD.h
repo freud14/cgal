@@ -38,8 +38,6 @@ public:
   typedef typename Well_separated_pair_decomposition::const_iterator Well_separated_pair_iterator;
 
   typedef typename Traits::Point_d                                   Point_d;
-  typedef typename Traits::Iso_box_d                                 Iso_box_d;
-  typedef typename Traits::Vector_d                                  Vector_d;
   typedef typename Traits::FT                                        FT;
 
   typedef typename std::vector<Point_d>                              Point_vector;
@@ -122,11 +120,11 @@ private:
   }
 
   void find_pairs(const Node* v, const Node* w) const {
-    if(are_well_separated(v, w)) {
+    if(v->is_well_separated_with(w, s)) {
       wspd.push_back(Well_separated_pair(v,w));
     }
     else {
-      if(has_longuest_side(v, w)) {
+      if(v->has_longuer_side_than(w)) {
         find_pairs(v->left(), w);
         find_pairs(v->right(), w);
       }
@@ -135,23 +133,6 @@ private:
         find_pairs(v, w->right());
       }
     }
-  }
-
-  bool are_well_separated(const Node* v, const Node* w) const  {
-    FT max_rad =  std::max(v->squared_radius(), w->squared_radius());
-    FT distance_vw = CGAL::squared_distance(v->center(), w->center());
-    return distance_vw >= (s+2)*(s+2)*max_rad;
-  }
-
-  bool has_longuest_side(const Node* v, const Node* w) const {
-    Iso_box_d rect_v = v->bounding_box();
-    Iso_box_d rect_w = w->bounding_box();
-    Vector_d vector_v = rect_v.max() - rect_v.min();
-    Vector_d vector_w = rect_w.max() - rect_w.min();
-
-    FT max_v = *std::max_element(vector_v.cartesian_begin(), vector_v.cartesian_end());
-    FT max_w = *std::max_element(vector_w.cartesian_begin(), vector_w.cartesian_end());
-    return max_v > max_w;
   }
 protected:
   mutable bool computed;

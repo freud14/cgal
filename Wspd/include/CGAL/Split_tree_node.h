@@ -33,6 +33,7 @@ public:
   typedef typename Traits::Point_d                                   Point_d;
   typedef typename Traits::Iso_box_d                                 Iso_box_d;
   typedef typename Traits::Sphere_d                                  Sphere_d;
+  typedef typename Traits::Vector_d                                  Vector_d;
   typedef CGAL::Point_container<Traits>                              Point_container;
 
   typedef typename Traits::FT                                        FT;
@@ -132,6 +133,23 @@ public:
 
   const Point_container& point_container() const {
     return container;
+  }
+
+  bool is_well_separated_with(const Node* w, FT s) const  {
+    FT max_rad =  std::max(this->squared_radius(), w->squared_radius());
+    FT distance_vw = CGAL::squared_distance(this->center(), w->center());
+    return distance_vw >= (s+2)*(s+2)*max_rad;
+  }
+
+  bool has_longuer_side_than(const Node* w) const {
+    Iso_box_d rect_v = this->bounding_box();
+    Iso_box_d rect_w = w->bounding_box();
+    Vector_d vector_v = rect_v.max() - rect_v.min();
+    Vector_d vector_w = rect_w.max() - rect_w.min();
+
+    FT max_v = *std::max_element(vector_v.cartesian_begin(), vector_v.cartesian_end());
+    FT max_w = *std::max_element(vector_w.cartesian_begin(), vector_w.cartesian_end());
+    return max_v > max_w;
   }
 private:
   Traits traits;
