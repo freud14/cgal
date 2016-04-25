@@ -28,6 +28,7 @@ template <class Traits>
 class Split_tree {
 public:
   typedef Split_tree_node<Traits>                                           Node;
+  typedef typename Node::Node_const_handle                                  Node_const_handle;
   typedef typename Traits::Point_d                                          Point_d;
   typedef typename Traits::Iso_box_d                                        Iso_box_d;
   typedef typename Node::Point_container                                    Point_container;
@@ -115,7 +116,7 @@ public:
     bbox_computed = true;
   }
 
-  const Node* root() const {
+  Node_const_handle root() const {
     compute();
     return tree_root;
   }
@@ -130,7 +131,7 @@ public:
     return bounding_boxes.end();
   }
 private:
-  void compute_bounding_boxes(const Node* node) const {
+  void compute_bounding_boxes(Node_const_handle node) const {
     if(node != NULL) {
       bounding_boxes.push_back(node->bounding_box());
       compute_bounding_boxes(node->left());
@@ -154,7 +155,7 @@ private:
 
   mutable bool computed;
   mutable Point_ptr_vector p_vec;
-  mutable Node* tree_root;
+  mutable Node_const_handle tree_root;
 
   mutable bool bbox_computed;
   mutable Bounding_box_vector bounding_boxes;

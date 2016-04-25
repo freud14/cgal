@@ -32,7 +32,7 @@ template <class Traits>
 class WSPD {
 public:
   typedef CGAL::Split_tree<Traits>                                   Split_tree;
-  typedef typename Split_tree::Node                                  Node;
+  typedef typename Split_tree::Node_const_handle                     Node_const_handle;
   typedef CGAL::Well_separated_pair<Traits>                          Well_separated_pair;
   typedef typename std::vector<Well_separated_pair>                  Well_separated_pair_decomposition;
   typedef typename Well_separated_pair_decomposition::const_iterator Well_separated_pair_iterator;
@@ -111,7 +111,7 @@ public:
     return wspd.size();
   }
 private:
-  void compute(const Node* u) const {
+  void compute(Node_const_handle u) const {
     if(u != NULL && !u->is_leaf()) {
       find_pairs(u->left(), u->right());
       compute(u->left());
@@ -119,7 +119,7 @@ private:
     }
   }
 
-  void find_pairs(const Node* v, const Node* w) const {
+  void find_pairs(Node_const_handle v, Node_const_handle w) const {
     if(v->is_well_separated_with(w, s)) {
       wspd.push_back(Well_separated_pair(v,w));
     }

@@ -10,7 +10,7 @@ namespace CGAL {
 
 template <class Traits>
 bool
-in(const typename Split_tree<Traits>::Node* node, const typename Traits::Point_d& p) {
+in(typename Split_tree<Traits>::Node_const_handle node, const typename Traits::Point_d& p) {
   typedef typename Split_tree<Traits>::Point_container Point_container;
   for(typename Point_container::const_iterator it = node->point_container().begin(); it != node->point_container().end(); it++) {
     if(**it == p) {
@@ -22,11 +22,10 @@ in(const typename Split_tree<Traits>::Node* node, const typename Traits::Point_d
 
 template <class Traits>
 bool
-is_pair_in_wspd(const CGAL::WSPD<Traits>& wspd, const typename CGAL::WSPD<Traits>::Node* a, const typename CGAL::WSPD<Traits>::Node* b) {
+is_pair_in_wspd(const CGAL::WSPD<Traits>& wspd, typename CGAL::WSPD<Traits>::Node_const_handle a, typename CGAL::WSPD<Traits>::Node_const_handle b) {
   typedef CGAL::WSPD<Traits> WSPD;
   typedef typename WSPD::Well_separated_pair Well_separated_pair;
   typedef typename WSPD::Well_separated_pair_iterator Well_separated_pair_iterator;
-  typedef typename WSPD::Node Node;
 
   for(Well_separated_pair_iterator it = wspd.wspd_begin(); it < wspd.wspd_end(); it++) {
     const Well_separated_pair &pair = *it;
@@ -51,9 +50,9 @@ template <class Traits>
 bool
 test_points(int d, const Traits& traits, const CGAL::WSPD<Traits>& points_wspd)
 {
-  typedef typename CGAL::WSPD<Traits>::Node Node;
+  typedef typename CGAL::WSPD<Traits>::Node_const_handle Node_const_handle;
 
-  const Node* points_root = points_wspd.split_tree().root();
+  Node_const_handle points_root = points_wspd.split_tree().root();
   assert(points_wspd.size() == 12);
   assert(is_pair_in_wspd<Traits>(points_wspd, points_root->right()->left(), points_root->right()->right()));
   assert(is_pair_in_wspd<Traits>(points_wspd, points_root->right()->right(), points_root->left()->right()));
@@ -80,7 +79,6 @@ wspd__batch_test(int d, const Traits& traits)
   typedef typename Traits::Point_d Point_d;
   typedef CGAL::WSPD<Traits> WSPD;
   typedef typename WSPD::Well_separated_pair Well_separated_pair;
-  typedef typename WSPD::Node Node;
 
   WSPD empty_wspd(d, 2.0);
   assert(empty_wspd.size() == 0);

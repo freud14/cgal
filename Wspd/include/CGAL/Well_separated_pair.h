@@ -27,20 +27,20 @@ template <class Traits>
 class Well_separated_pair {
 public:
   typedef CGAL::Split_tree<Traits>                                   Split_tree;
-  typedef typename Split_tree::Node                                  Node;
+  typedef typename Split_tree::Node_const_handle                     Node_const_handle;
 
-  Well_separated_pair(const Node* a, const Node* b) : first(a), second(b) { }
+  Well_separated_pair(Node_const_handle a, Node_const_handle b) : first(a), second(b) { }
 
-  inline const Node* a() const {
+  inline Node_const_handle a() const {
     return first;
   }
 
-  inline const Node* b() const {
+  inline Node_const_handle b() const {
     return second;
   }
 private:
-  const Node* first;
-  const Node* second;
+  Node_const_handle first;
+  Node_const_handle second;
 };
 
 } // End namespace

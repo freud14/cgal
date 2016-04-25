@@ -27,9 +27,9 @@ Split tree class.
 typedef CGAL::Split_tree<Traits>                                   Split_tree;
 
 /*!
-Split tree node class.
+Split tree node const handle.
 */
-typedef typename Split_tree::Node                                  Node;
+typedef typename Split_tree::Node_const_handle                     Node_const_handle;
 
 /// @}
 
@@ -39,7 +39,7 @@ typedef typename Split_tree::Node                                  Node;
 /*!
 Intialize a well-separated pair with two well-separated split tree nodes.
 */
-Well_separated_pair(const Node* a, const Node* b);
+Well_separated_pair(Node_const_handle a, Node_const_handle b);
 
 /// @}
 
@@ -49,12 +49,12 @@ Well_separated_pair(const Node* a, const Node* b);
 /*!
 Returns a pointer to the first split tree node of the well-separated pair.
 */
-inline const Node* a() const;
+inline Node_const_handle a() const;
 
 /*!
 Returns a pointer to the second split tree node of the well-separated pair.
 */
-inline const Node* b() const;
+inline Node_const_handle b() const;
 
 /// @}
 };

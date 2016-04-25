@@ -29,10 +29,10 @@ test_points(int d, const Traits& traits, const CGAL::Split_tree<Traits>& points_
 {
   typedef typename Traits::Iso_box_d Iso_box_d;
   typedef CGAL::Split_tree<Traits> Split_tree;
-  typedef typename Split_tree::Node Node;
+  typedef typename Split_tree::Node_const_handle Node_const_handle;
 
   std::vector<Iso_box_d> points_bboxes(points_split_tree.bounding_box_begin(), points_split_tree.bounding_box_end());
-  const Node* points_root = points_split_tree.root();
+  Node_const_handle points_root = points_split_tree.root();
   assert(points_bboxes.size() == 13);
   assert(points_root->bounding_box() == Iso_box_d(get_point_d(d, 10, 30, traits), get_point_d(d, 464, 411, traits)));
   assert(points_root->right()->bounding_box() == Iso_box_d(get_point_d(d, 328, 30, traits), get_point_d(d, 464, 367, traits)));
@@ -50,7 +50,7 @@ split_tree__batch_test(int d, const Traits& traits)
   typedef typename Traits::Iso_box_d Iso_box_d;
   typedef typename Traits::FT FT;
   typedef CGAL::Split_tree<Traits> Split_tree;
-  typedef typename Split_tree::Node Node;
+  typedef typename Split_tree::Node_const_handle Node_const_handle;
 
   Split_tree empty_split_tree(d);
   assert(empty_split_tree.root() == NULL);
@@ -155,7 +155,7 @@ split_tree__batch_test(int d, const Traits& traits)
   }
   Split_tree points_d_split_tree(d, points_d.begin(), points_d.end());
   std::vector<Iso_box_d> points_d_bboxes(points_d_split_tree.bounding_box_begin(), points_d_split_tree.bounding_box_end());
-  const Node* current_node = points_d_split_tree.root();
+  Node_const_handle current_node = points_d_split_tree.root();
   for(int i = d-1; i >= 0; i--) {
     Iso_box_d points_d_bbox(get_point_d(d, 0, 0, traits), corners[i]);
     assert(in<Traits>(points_d_bboxes, points_d_bbox));
@@ -182,7 +182,7 @@ split_tree__batch_test(int d, const Traits& traits)
   }
   Split_tree points_linear_split_tree(d, points_linear_split.begin(), points_linear_split.end());
   std::vector<Iso_box_d> points_linear_bboxes(points_linear_split_tree.bounding_box_begin(), points_linear_split_tree.bounding_box_end());
-  const Node* points_linear_current_node = points_linear_split_tree.root();
+  Node_const_handle points_linear_current_node = points_linear_split_tree.root();
   for(int i = NB_POINTS_LINEAR_SPLIT; i >= 0; i--) {
     Iso_box_d points_linear_bbox(points_linear_split[0], points_linear_split[i]);
     assert(in<Traits>(points_linear_bboxes, points_linear_bbox));

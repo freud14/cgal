@@ -30,6 +30,7 @@ template <class Traits>
 class Split_tree_node {
 public:
   typedef Split_tree_node<Traits>                                    Node;
+  typedef const Node*                                                Node_const_handle;
   typedef typename Traits::Point_d                                   Point_d;
   typedef typename Traits::Iso_box_d                                 Iso_box_d;
   typedef typename Traits::Sphere_d                                  Sphere_d;
@@ -84,8 +85,8 @@ public:
     delete right_child;
   }
 
-  inline const Node* left() const { return left_child;}
-  inline const Node* right() const { return right_child; }
+  inline Node_const_handle left() const { return left_child;}
+  inline Node_const_handle right() const { return right_child; }
   inline bool is_leaf() const { return left_child == NULL || right_child == NULL; }
 
   Iso_box_d bounding_box() const {
@@ -135,13 +136,13 @@ public:
     return container;
   }
 
-  bool is_well_separated_with(const Node* w, FT s) const  {
+  bool is_well_separated_with(Node_const_handle w, FT s) const  {
     FT max_rad =  std::max(this->squared_radius(), w->squared_radius());
     FT distance_vw = CGAL::squared_distance(this->center(), w->center());
     return distance_vw >= (s+2)*(s+2)*max_rad;
   }
 
-  bool has_longuer_side_than(const Node* w) const {
+  bool has_longuer_side_than(Node_const_handle w) const {
     Iso_box_d rect_v = this->bounding_box();
     Iso_box_d rect_w = w->bounding_box();
     Vector_d vector_v = rect_v.max() - rect_v.min();
@@ -153,8 +154,8 @@ public:
   }
 private:
   Traits traits;
-  Node* left_child;
-  Node* right_child;
+  Node_const_handle left_child;
+  Node_const_handle right_child;
   Point_container container; //Node
   int d;
 

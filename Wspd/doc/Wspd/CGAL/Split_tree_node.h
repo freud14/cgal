@@ -25,6 +25,11 @@ Alias for this class.
 typedef Split_tree_node<Traits> Node;
 
 /*!
+A const handle for this class.
+*/
+typedef const Node* Node_const_handle;
+
+/*!
 Point class.
 */
 typedef typename Traits::Point_d Point_d;
@@ -68,12 +73,12 @@ Split_tree_node(const Split_tree_node& node);
 /*!
 Returns a pointer to the left child of the node or `NULL` if the node is a leaf.
 */
-inline const Node* left() const;
+inline Node_const_handle left() const;
 
 /*!
 Returns a pointer to the right child of the node or `NULL` if the node is a leaf.
 */
-inline const Node* right() const;
+inline Node_const_handle right() const;
 
 /*!
 Indicates whether a node is a leaf node.

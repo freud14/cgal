@@ -26,6 +26,11 @@ Split tree node class.
 typedef Split_tree_node<Traits> Node;
 
 /*!
+Split tree node const handle.
+*/
+typedef typename Node::Node_const_handle Node_const_handle;
+
+/*!
 Point class.
 */
 typedef typename Traits::Point_d Point_d;
@@ -113,7 +118,7 @@ void clear();
 Returns a pointer to the root node of the split tree or NULL if the point set of
 the split tree is empty.
 */
-const Node* root() const;
+Node_const_handle root() const;
 
 /*!
 Returns a const iterator to the first bounding box in the split tree. The order
