@@ -70,9 +70,9 @@ int main(int argc, char* argv[])
 #endif
 
 #ifdef CGAL_USE_GMP
-  CGAL::Split_tree_traits_2< CGAL::Homogeneous<CGAL::Quotient<CGAL::Gmpz> > > wspd_2_H_Qgmp;
-  std::cout << "Homogeneous<Quotient<Gmpz> > >:     ";
-  CGAL::wspd__batch_test(2, wspd_2_H_Qgmp);
+  CGAL::Split_tree_traits_2< CGAL::Homogeneous<CGAL::Gmpz> > wspd_2_H_gmp;
+  std::cout << "Homogeneous<Gmpz>:     ";
+  CGAL::wspd__batch_test(2, wspd_2_H_gmp);
 #endif
 
   CGAL::Split_tree_traits_2< CGAL::Homogeneous<double> > wspd_2_H_double;
@@ -132,9 +132,9 @@ int main(int argc, char* argv[])
 #endif
 
 #ifdef CGAL_USE_GMP
-  CGAL::Split_tree_traits_3< CGAL::Homogeneous<CGAL::Quotient<CGAL::Gmpz> > > wspd_3_H_Qgmp;
-  std::cout << "Homogeneous<Quotient<Gmpz> > >:     ";
-  CGAL::wspd__batch_test(3, wspd_3_H_Qgmp);
+  CGAL::Split_tree_traits_3< CGAL::Homogeneous<CGAL::Gmpz> > wspd_3_H_gmp;
+  std::cout << "Homogeneous<Gmpz>:     ";
+  CGAL::wspd__batch_test(3, wspd_3_H_gmp);
 #endif
 
   CGAL::Split_tree_traits_3< CGAL::Homogeneous<double> > wspd_3_H_double;
@@ -168,17 +168,16 @@ int main(int argc, char* argv[])
   std::cout << "Cartesian_d<CORE::Expr>:     ";
   CGAL::wspd__batch_test(d, wspd_d_S_core);
 
-  // TODO: Make it work with homogeneous coordinates.
-/*#ifdef CGAL_USE_LEDA
+#ifdef CGAL_USE_LEDA
   CGAL::Split_tree_traits_d< CGAL::Homogeneous_d<leda_rational> > wspd_d_H_rational;
   std::cout << "Homogeneous_d<rational>:     ";
   CGAL::wspd__batch_test(d, wspd_d_H_rational);
 #endif
 
 #ifdef CGAL_USE_GMP
-  CGAL::Split_tree_traits_d< CGAL::Homogeneous_d<CGAL::Quotient<CGAL::Gmpz> > > wspd_d_H_Qgmp;
-  std::cout << "Homogeneous_d<Quotient<Gmpz> > >:     ";
-  CGAL::wspd__batch_test(d, wspd_d_H_Qgmp);
+  CGAL::Split_tree_traits_d< CGAL::Homogeneous_d<CGAL::Gmpz> > wspd_d_H_gmp;
+  std::cout << "Homogeneous_d<Gmpz>:     ";
+  CGAL::wspd__batch_test(d, wspd_d_H_gmp);
 #endif
 
   CGAL::Split_tree_traits_d< CGAL::Homogeneous_d<double> > wspd_d_H_double;
@@ -187,7 +186,7 @@ int main(int argc, char* argv[])
 
   CGAL::Split_tree_traits_d< CGAL::Homogeneous_d<CORE::Expr> > wspd_d_H_core;
   std::cout << "Homogeneous_d<CORE::Expr>:     ";
-  CGAL::wspd__batch_test(d, wspd_d_H_core);*/
+  CGAL::wspd__batch_test(d, wspd_d_H_core);
 
   return 0;
 }

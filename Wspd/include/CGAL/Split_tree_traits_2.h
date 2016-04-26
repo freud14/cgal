@@ -29,6 +29,7 @@ namespace CGAL {
   public:
     typedef Kernel K;
     typedef typename Kernel::Vector_2 Vector_d;
+    typedef typename Kernel::RT RT;
 
   private:
     template <class K>
@@ -49,13 +50,13 @@ namespace CGAL {
     class Construct_point {
     public:
       typedef typename K::Point_2 Point_2;
-      typedef typename K::FT FT;
+      typedef typename K::RT RT;
       template<class InputIterator>
-      Point_2 operator()(int d, InputIterator first, InputIterator last) const {
+      Point_2 operator()(int d, InputIterator first, InputIterator last, RT D) const {
         CGAL_assertion(d == 2);
-        FT x = *first++;
-        FT y = *first++;
-        return Point_2(x, y);
+        RT x = *first++;
+        RT y = *first++;
+        return Point_2(x, y, D);
       }
     };
   public:

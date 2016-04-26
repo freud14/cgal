@@ -16,11 +16,11 @@ in(const std::vector<typename Traits::Iso_box_d>& points, const typename Traits:
 
 template <class Traits>
 typename Traits::Point_d
-get_point_d(int d, typename Traits::FT a, typename Traits::FT b, const Traits& traits) {
-  std::vector<typename Traits::FT> coord(d, 0);
+get_point_d(int d, typename Traits::RT a, typename Traits::RT b, const Traits& traits) {
+  std::vector<typename Traits::RT> coord(d, 0);
   coord[d - 2] = a;
   coord[d - 1] = b;
-  return traits.construct_point_d_object()(d, coord.begin(), coord.end());
+  return traits.construct_point_d_object()(d, coord.begin(), coord.end(), 1);
 }
 
 template <class Traits>
@@ -48,7 +48,7 @@ split_tree__batch_test(int d, const Traits& traits)
 {
   typedef typename Traits::Point_d Point_d;
   typedef typename Traits::Iso_box_d Iso_box_d;
-  typedef typename Traits::FT FT;
+  typedef typename Traits::RT RT;
   typedef CGAL::Split_tree<Traits> Split_tree;
   typedef typename Split_tree::Node_const_handle Node_const_handle;
 
@@ -139,19 +139,19 @@ split_tree__batch_test(int d, const Traits& traits)
 
   // Construction of a linear split tree where each dimension in split once
   std::vector<Point_d> points_d;
-  std::vector< std::vector<FT> > corners_coord(d, std::vector<FT>(d, 0));
+  std::vector< std::vector<RT> > corners_coord(d, std::vector<RT>(d, 0));
   for(int i = 0; i < d; i++) {
     for(int j = i; j < d; j++) {
       corners_coord[j][i] = i;
     }
 
-    std::vector<FT> coord(d, 0);
+    std::vector<RT> coord(d, 0);
     coord[i] = i;
-    points_d.push_back(traits.construct_point_d_object()(d, coord.begin(), coord.end()));
+    points_d.push_back(traits.construct_point_d_object()(d, coord.begin(), coord.end(), 1));
   }
   std::vector<Point_d> corners;
   for(int i = 0; i < d; i++) {
-    corners.push_back(traits.construct_point_d_object()(d, corners_coord[i].begin(), corners_coord[i].end()));
+    corners.push_back(traits.construct_point_d_object()(d, corners_coord[i].begin(), corners_coord[i].end(), 1));
   }
   Split_tree points_d_split_tree(d, points_d.begin(), points_d.end());
   std::vector<Iso_box_d> points_d_bboxes(points_d_split_tree.bounding_box_begin(), points_d_split_tree.bounding_box_end());

@@ -39,11 +39,11 @@ is_pair_in_wspd(const CGAL::WSPD<Traits>& wspd, typename CGAL::WSPD<Traits>::Nod
 
 template <class Traits>
 typename Traits::Point_d
-get_point_d(int d, typename Traits::FT a, typename Traits::FT b, const Traits& traits) {
-  std::vector<typename Traits::FT> coord(d, 0);
+get_point_d(int d, typename Traits::RT a, typename Traits::RT b, const Traits& traits) {
+  std::vector<typename Traits::RT> coord(d, 0);
   coord[d - 2] = a;
   coord[d - 1] = b;
-  return traits.construct_point_d_object()(d, coord.begin(), coord.end());
+  return traits.construct_point_d_object()(d, coord.begin(), coord.end(), 1);
 }
 
 template <class Traits>

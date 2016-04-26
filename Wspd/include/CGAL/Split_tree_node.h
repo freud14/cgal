@@ -26,6 +26,95 @@
 
 namespace CGAL {
 
+template <class Traits, class Rep_tag>
+class Construct_bounding_box_;
+
+template <class Traits>
+class Construct_bounding_box_<Traits, Cartesian_tag> {
+public:
+  typedef typename Traits::Iso_box_d                                 Iso_box_d;
+  typedef typename Traits::FT                                        FT;
+  typedef typename internal::Get_dimension_tag<Traits>::Dimension    D;
+  typedef CGAL::Point_container<Traits>                              Point_container;
+
+  Iso_box_d operator()(int d, const Point_container& container) const {
+    std::vector<FT> min;
+    std::vector<FT> max;
+    const Kd_tree_rectangle<FT, D>& kdbox = container.bounding_box();
+    for(int i = 0; i < d; i++) {
+      min.push_back(kdbox.min_coord(i));
+      max.push_back(kdbox.max_coord(i));
+    }
+    return construct_iso_box_d(construct_point_d(d, min.begin(), min.end(), 1),
+                      construct_point_d(d, max.begin(), max.end(), 1));
+  }
+private:
+  typename Traits::Construct_iso_box_d construct_iso_box_d;
+  typename Traits::Construct_point_d construct_point_d;
+};
+
+template <class Traits>
+class Construct_bounding_box_<Traits, Homogeneous_tag> {
+public:
+  typedef typename Traits::Iso_box_d                                 Iso_box_d;
+  typedef typename Traits::FT                                        FT;
+  typedef typename internal::Get_dimension_tag<Traits>::Dimension    D;
+  typedef CGAL::Point_container<Traits>                              Point_container;
+  typedef CGAL::Fraction_traits<FT>                                  FractionTraits;
+  typedef typename FractionTraits::Numerator_type                    Numerator_type;
+  typedef typename FractionTraits::Denominator_type                  Denominator_type;
+  typedef typename FractionTraits::Decompose                         Decompose;
+
+  Iso_box_d operator()(int d, const Point_container& container) const {
+    std::vector<FT> minFT;
+    std::vector<FT> maxFT;
+    const Kd_tree_rectangle<FT, D>& kdbox = container.bounding_box();
+    for(int i = 0; i < d; i++) {
+      minFT.push_back(kdbox.min_coord(i));
+      maxFT.push_back(kdbox.max_coord(i));
+    }
+
+    std::vector<Numerator_type> minNum(d, 0);
+    std::vector<Numerator_type> maxNum(d, 0);
+    std::vector<Denominator_type> minDen(d, 0);
+    std::vector<Denominator_type> maxDen(d, 0);
+    Denominator_type minDvalue = 1;
+    Denominator_type maxDvalue = 1;
+    for(int i = 0; i < d; i++) {
+      decompose(minFT[i], minNum[i], minDen[i]);
+      decompose(maxFT[i], maxNum[i], maxDen[i]);
+      minDvalue *= minDen[i];
+      maxDvalue *= maxDen[i];
+    }
+    std::vector<Denominator_type> maxMultipleD(d, 1);
+    std::vector<Denominator_type> minMultipleD(d, 1);
+    for(int i = 0; i < d; i++) {
+      for(int j = 0; j < d; j++) {
+        if(i != j) {
+          minMultipleD[i] *= minDen[j];
+          maxMultipleD[i] *= maxDen[j];
+        }
+      }
+    }
+    for(int i = 0; i < d; i++) {
+      minNum[i] *= minMultipleD[i];
+      maxNum[i] *= maxMultipleD[i];
+    }
+
+    return construct_iso_box_d(construct_point_d(d, minNum.begin(), minNum.end(), minDvalue),
+                      construct_point_d(d, maxNum.begin(), maxNum.end(), maxDvalue));
+  }
+private:
+  typename Traits::Construct_iso_box_d construct_iso_box_d;
+  typename Traits::Construct_point_d construct_point_d;
+  mutable Decompose decompose;
+};
+
+
+template <class Traits>
+class Construct_bounding_box : public Construct_bounding_box_<Traits, typename Traits::K::Rep_tag> { };
+
+
 template <class Traits>
 class Split_tree_node {
 public:
@@ -91,15 +180,7 @@ public:
 
   Iso_box_d bounding_box() const {
     if(!bbox_computed) {
-      std::vector<FT> min;
-      std::vector<FT> max;
-      const Kd_tree_rectangle<FT, D>& kdbox = container.bounding_box();
-      for(int i = 0; i < d; i++) {
-        min.push_back(kdbox.min_coord(i));
-        max.push_back(kdbox.max_coord(i));
-      }
-      bbox = construct_iso_box_d(construct_point_d(d, min.begin(), min.end()),
-                        construct_point_d(d, max.begin(), max.end()));
+      bbox = construct_bounding_box(d, container);
       bbox_computed = true;
     }
     return bbox;
@@ -172,6 +253,7 @@ private:
   typename Traits::Construct_iso_box_d construct_iso_box_d;
   typename Traits::Construct_sphere_d construct_sphere_d;
   typename Traits::Construct_point_d construct_point_d;
+  Construct_bounding_box<Traits> construct_bounding_box;
 };
 
 } // End namespace
