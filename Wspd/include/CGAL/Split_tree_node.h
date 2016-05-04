@@ -80,6 +80,7 @@ public:
     std::vector<Denominator_type> maxDen(d, 0);
     Denominator_type minDvalue = 1;
     Denominator_type maxDvalue = 1;
+    Decompose decompose;
     for(int i = 0; i < d; i++) {
       decompose(minFT[i], minNum[i], minDen[i]);
       decompose(maxFT[i], maxNum[i], maxDen[i]);
@@ -107,7 +108,6 @@ public:
 private:
   typename Traits::Construct_iso_box_d construct_iso_box_d;
   typename Traits::Construct_point_d construct_point_d;
-  mutable Decompose decompose;
 };
 
 
@@ -250,9 +250,7 @@ private:
   mutable bool squared_radius_computed;
   mutable FT sqradius;
 
-  typename Traits::Construct_iso_box_d construct_iso_box_d;
   typename Traits::Construct_sphere_d construct_sphere_d;
-  typename Traits::Construct_point_d construct_point_d;
   Construct_bounding_box<Traits> construct_bounding_box;
 };
 

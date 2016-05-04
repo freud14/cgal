@@ -40,10 +40,16 @@ is_pair_in_wspd(const CGAL::WSPD<Traits>& wspd, typename CGAL::WSPD<Traits>::Nod
 template <class Traits>
 typename Traits::Point_d
 get_point_d(int d, typename Traits::RT a, typename Traits::RT b, const Traits& traits) {
+  return get_point_d(d, a, b, 1, traits);
+}
+
+template <class Traits>
+typename Traits::Point_d
+get_point_d(int d, typename Traits::RT a, typename Traits::RT b, typename Traits::RT D, const Traits& traits) {
   std::vector<typename Traits::RT> coord(d, 0);
-  coord[d - 2] = a;
-  coord[d - 1] = b;
-  return traits.construct_point_d_object()(d, coord.begin(), coord.end(), 1);
+  coord[d - 2] = a*D;
+  coord[d - 1] = b*D;
+  return traits.construct_point_d_object()(d, coord.begin(), coord.end(), D);
 }
 
 template <class Traits>
@@ -76,6 +82,11 @@ template <class Traits>
 bool
 wspd__batch_test(int d, const Traits& traits)
 {
+  /*
+  Random homogeneous denominator have been put for the creation of the points to test the
+  homogeneous kernels. The coordinates of a point are multiplied by the denominator before
+  its creation so that it is clear what is the point in the Cartesian coordinate system.
+  */
   typedef typename Traits::Point_d Point_d;
   typedef CGAL::WSPD<Traits> WSPD;
   typedef typename WSPD::Well_separated_pair Well_separated_pair;
@@ -85,14 +96,14 @@ wspd__batch_test(int d, const Traits& traits)
   assert(empty_wspd.wspd_begin() == empty_wspd.wspd_end());
   assert(empty_wspd.points_begin() == empty_wspd.points_end());
 
-  Point_d single_point[] = {get_point_d(d, 1, 2, traits)};
+  Point_d single_point[] = {get_point_d(d, 1, 2, 2, traits)};
   WSPD single_wspd(d, 2.0, single_point, single_point + 1);
   assert(single_wspd.size() == 0);
   assert(single_wspd.wspd_begin() == single_wspd.wspd_end());
   assert(*single_wspd.points_begin() == single_point[0]);
   assert(single_wspd.points_begin() + 1 == single_wspd.points_end());
 
-  Point_d two_points[] = {get_point_d(d, 1, 2, traits), get_point_d(d, 1, 4, traits)};
+  Point_d two_points[] = {get_point_d(d, 1, 2, 5, traits), get_point_d(d, 1, 4, 7, traits)};
   WSPD two_points_wspd(d, 2.0, two_points, two_points + 2);
   std::vector<Well_separated_pair> two_points_pairs(two_points_wspd.wspd_begin(), two_points_wspd.wspd_end());
   assert(two_points_wspd.size() == 1);
@@ -100,7 +111,7 @@ wspd__batch_test(int d, const Traits& traits)
   assert(in<Traits>(two_points_pairs[0].a(), two_points[0]));
   assert(in<Traits>(two_points_pairs[0].b(), two_points[1]));
 
-  Point_d three_points[] = {get_point_d(d, 0, 2, traits), get_point_d(d, 0, 0, traits), get_point_d(d, 0, 5, traits)};
+  Point_d three_points[] = {get_point_d(d, 0, 2, 1, traits), get_point_d(d, 0, 0, 3, traits), get_point_d(d, 0, 5, 5, traits)};
   WSPD three_points_wspd(d, 2.0, three_points, three_points + 3);
   std::vector<Well_separated_pair> three_points_pairs(three_points_wspd.wspd_begin(), three_points_wspd.wspd_end());
   assert(three_points_wspd.size() == 2);
@@ -110,7 +121,7 @@ wspd__batch_test(int d, const Traits& traits)
   assert(in<Traits>(three_points_pairs[0].a(), three_points[1]));
   assert(in<Traits>(three_points_pairs[1].a(), three_points[1]) && in<Traits>(three_points_pairs[1].b(), three_points[0]));
 
-  Point_d four_points[] = {get_point_d(d, 5, 2, traits), get_point_d(d, 4, 3, traits), get_point_d(d, 0, 1, traits), get_point_d(d, -1, -1, traits)};
+  Point_d four_points[] = {get_point_d(d, 5, 2, 3, traits), get_point_d(d, 4, 3, 4, traits), get_point_d(d, 0, 1, 5, traits), get_point_d(d, -1, -1, -8, traits)};
   WSPD four_points_wspd(d, 2.0, four_points, four_points + 4);
   std::vector<Well_separated_pair> four_points_pairs(four_points_wspd.wspd_begin(), four_points_wspd.wspd_end());
   assert(four_points_wspd.size() == 3);
@@ -126,9 +137,9 @@ wspd__batch_test(int d, const Traits& traits)
 
   std::vector<Point_d> points;
   std::ifstream input("data/points.txt");
-  double x,y;
-  while (input >> x >> y) {
-    points.push_back(get_point_d(d, x, y, traits));
+  double x,y,D;
+  while (input >> x >> y >> D) {
+    points.push_back(get_point_d(d, x, y, D, traits));
   }
 
   WSPD points_wspd(d, 1.4, points.begin(), points.end());
