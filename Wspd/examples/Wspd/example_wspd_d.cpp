@@ -37,6 +37,6 @@ int main(int argc, char* argv[]) {
   }*/
 
   // Prints the number of pairs in the WSPD.
-  std::cout << wspd.size() << std::endl;
+  std::cout << wspd.wspd_size() << std::endl;
   return 0;
 }

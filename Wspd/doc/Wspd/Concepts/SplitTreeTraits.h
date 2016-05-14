@@ -34,7 +34,7 @@ typedef unspecified_type Construct_sphere_d;
 /*!
 Construction object type for Point_d. Must provide
 `template<class InputIterator>
-Point_d operator()(int d, InputIterator first, InputIterator last) const`.
+Point_d operator()(int d, InputIterator first, InputIterator last, RT D) const`.
 */
 typedef unspecified_type Construct_point_d;
 

@@ -57,7 +57,7 @@ public:
     delete_root();
   }
 
-  Split_tree<Traits>& operator=(const Split_tree<Traits>& split_tree) {
+  Split_tree& operator=(const Split_tree& split_tree) {
     if (this == &split_tree) {
       return *this;
     }

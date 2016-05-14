@@ -23,6 +23,6 @@ int main(int argc, char* argv[]) {
     pts.push_back(Point_2(FT(0), CORE::pow(FT(2), i)));
   }
   WSPD wspd(2, 1.0, pts.begin(), pts.end());
-  std::cout << wspd.size() << std::endl;
+  std::cout << wspd.wspd_size() << std::endl;
   return 0;
 }

@@ -130,6 +130,12 @@ of the %WSPD may be done on the call of this method if it was not done before.
 Well_separated_pair_iterator wspd_end() const;
 
 /*!
+Returns the number of pairs in the %WSPD. The computation of the %WSPD may be
+done on the call of this method if it was not done before.
+*/
+int wspd_size() const;
+
+/*!
 Returns a const iterator to the first point in the %WSPD.
 */
 Point_iterator points_begin() const;
@@ -140,10 +146,9 @@ Returns a past-the-end const iterator of the points in the %WSPD.
 Point_iterator points_end() const;
 
 /*!
-Returns the number of pairs in the %WSPD. The computation of the %WSPD may be
-done on the call of this method if it was not done before.
+Returns the number of points in the %WSPD.
 */
-int size() const;
+int points_size() const;
 
 /// @}
 };

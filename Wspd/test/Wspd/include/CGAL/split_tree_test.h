@@ -5,29 +5,9 @@
 #include <iostream>
 #include <CGAL/Split_tree.h>
 
+#include <CGAL/wspd_test_util.h>
 
 namespace CGAL {
-
-template <class Traits>
-bool
-in(const std::vector<typename Traits::Iso_box_d>& points, const typename Traits::Iso_box_d& p) {
-  return std::find(points.begin(), points.end(), p) != points.end();
-}
-
-template <class Traits>
-typename Traits::Point_d
-get_point_d(int d, typename Traits::RT a, typename Traits::RT b, const Traits& traits) {
-  return get_point_d(d, a, b, 1, traits);
-}
-
-template <class Traits>
-typename Traits::Point_d
-get_point_d(int d, typename Traits::RT a, typename Traits::RT b, typename Traits::RT D, const Traits& traits) {
-  std::vector<typename Traits::RT> coord(d, 0);
-  coord[d - 2] = a*D;
-  coord[d - 1] = b*D;
-  return traits.construct_point_d_object()(d, coord.begin(), coord.end(), D);
-}
 
 template <class Traits>
 bool
@@ -93,9 +73,9 @@ split_tree__batch_test(int d, const Traits& traits)
   assert(two_points_split_tree.root()->right()->is_leaf());
   assert(two_points_split_tree.root()->right()->bounding_box() == two_points_expected_right_bbox);
   assert(two_points_bboxes.size() == 3);
-  assert(in<Traits>(two_points_bboxes, two_points_expected_root_bbox));
-  assert(in<Traits>(two_points_bboxes, two_points_expected_left_bbox));
-  assert(in<Traits>(two_points_bboxes, two_points_expected_right_bbox));
+  assert(in(two_points_bboxes, two_points_expected_root_bbox));
+  assert(in(two_points_bboxes, two_points_expected_left_bbox));
+  assert(in(two_points_bboxes, two_points_expected_right_bbox));
 
   Point_d three_points[] = {get_point_d(d, 5, 2, 1, traits), get_point_d(d, 4, 3, 3, traits), get_point_d(d, 1, 1, 5, traits)};
   Split_tree three_points_split_tree(d, three_points, three_points + 3);
@@ -112,9 +92,9 @@ split_tree__batch_test(int d, const Traits& traits)
   assert(three_points_split_tree.root()->right()->is_leaf() == false);
   assert(three_points_split_tree.root()->right()->bounding_box() == three_points_expected_right_bbox);
   assert(three_points_bboxes.size() == 5);
-  assert(in<Traits>(three_points_bboxes, three_points_expected_root_bbox));
-  assert(in<Traits>(three_points_bboxes, three_points_expected_left_bbox));
-  assert(in<Traits>(three_points_bboxes, three_points_expected_right_bbox));
+  assert(in(three_points_bboxes, three_points_expected_root_bbox));
+  assert(in(three_points_bboxes, three_points_expected_left_bbox));
+  assert(in(three_points_bboxes, three_points_expected_right_bbox));
 
   Point_d four_points[] = {get_point_d(d, 5, 2, 3, traits), get_point_d(d, 4, 3, 4, traits), get_point_d(d, 1, 1, 5, traits), get_point_d(d, -1, -1, -8, traits)};
   Split_tree four_points_split_tree(d, four_points, four_points + 4);
@@ -131,9 +111,9 @@ split_tree__batch_test(int d, const Traits& traits)
   assert(four_points_split_tree.root()->right()->is_leaf() == false);
   assert(four_points_split_tree.root()->right()->bounding_box() == four_points_expected_right_bbox);
   assert(four_points_bboxes.size() == 7);
-  assert(in<Traits>(four_points_bboxes, four_points_expected_root_bbox));
-  assert(in<Traits>(four_points_bboxes, four_points_expected_left_bbox));
-  assert(in<Traits>(four_points_bboxes, four_points_expected_right_bbox));
+  assert(in(four_points_bboxes, four_points_expected_root_bbox));
+  assert(in(four_points_bboxes, four_points_expected_left_bbox));
+  assert(in(four_points_bboxes, four_points_expected_right_bbox));
 
 
   Point_d ambiguous_split_points[] = {get_point_d(d, 0, 0, 1, traits), get_point_d(d, 2, 0, 5, traits), get_point_d(d, 2, 1, 4, traits), get_point_d(d, 2, -1, 4, traits), get_point_d(d, 4, 0, 2, traits)};
@@ -144,8 +124,8 @@ split_tree__batch_test(int d, const Traits& traits)
   Iso_box_d first_possibility_right_bbox(get_point_d(d, 2, -1, 5, traits), get_point_d(d, 4, 1, 2, traits));
   Iso_box_d second_possibility_left_bbox(get_point_d(d, 0, -1, 10, traits), get_point_d(d, 2, 1, 2, traits));
   Iso_box_d second_possibility_right_bbox(get_point_d(d, 4, 0, 8, traits), get_point_d(d, 4, 0, 1, traits));
-  assert((in<Traits>(ambiguous_split_points_bboxes, first_possibility_left_bbox) && in<Traits>(ambiguous_split_points_bboxes, first_possibility_right_bbox))
-          || (in<Traits>(ambiguous_split_points_bboxes, second_possibility_left_bbox) && in<Traits>(ambiguous_split_points_bboxes, second_possibility_left_bbox)));
+  assert((in(ambiguous_split_points_bboxes, first_possibility_left_bbox) && in(ambiguous_split_points_bboxes, first_possibility_right_bbox))
+          || (in(ambiguous_split_points_bboxes, second_possibility_left_bbox) && in(ambiguous_split_points_bboxes, second_possibility_left_bbox)));
 
 
   // Construction of a linear split tree where each dimension in split once
@@ -169,7 +149,7 @@ split_tree__batch_test(int d, const Traits& traits)
   Node_const_handle current_node = points_d_split_tree.root();
   for(int i = d-1; i >= 0; i--) {
     Iso_box_d points_d_bbox(get_point_d(d, 0, 0, traits), corners[i]);
-    assert(in<Traits>(points_d_bboxes, points_d_bbox));
+    assert(in(points_d_bboxes, points_d_bbox));
 
     assert(current_node->bounding_box() == points_d_bbox);
     if(i != 0) {
@@ -196,7 +176,7 @@ split_tree__batch_test(int d, const Traits& traits)
   Node_const_handle points_linear_current_node = points_linear_split_tree.root();
   for(int i = NB_POINTS_LINEAR_SPLIT; i >= 0; i--) {
     Iso_box_d points_linear_bbox(points_linear_split[0], points_linear_split[i]);
-    assert(in<Traits>(points_linear_bboxes, points_linear_bbox));
+    assert(in(points_linear_bboxes, points_linear_bbox));
 
     assert(points_linear_current_node->bounding_box() == points_linear_bbox);
     if(i != 0) {

@@ -43,17 +43,40 @@ public:
   typedef typename std::vector<Point_d>                              Point_vector;
   typedef typename Point_vector::const_iterator                      Point_iterator;
 
-  WSPD(int d, FT separation_ratio) : s(separation_ratio), computed_split_tree(d), computed(true) { }
+  WSPD(int dimension, FT separation_ratio) :
+            d(dimension), s(separation_ratio), stree(d), computed(true) { }
 
   template <class InputIterator>
-  WSPD(int d, FT separation_ratio, InputIterator begin, InputIterator end) : s(separation_ratio), computed_split_tree(d, begin, end), points(begin, end), computed(false) { }
+  WSPD(int dimension, FT separation_ratio, InputIterator begin, InputIterator end) :
+            d(dimension), s(separation_ratio), stree(d, begin, end), points(begin, end), computed(false) { }
+
+  WSPD(const WSPD& rhs) :
+            d(rhs.d), s(rhs.s), stree(rhs.stree), points(rhs.points), computed(false) { }
+
+  WSPD& operator=(const WSPD& rhs) {
+    if (this == &rhs) {
+      return *this;
+    }
+
+    d = rhs.d;
+    s = rhs.s;
+    stree = rhs.stree;
+    points = rhs.points;
+    computed_wspd.clear();
+    computed = false;
+    return *this;
+  }
 
   virtual void compute() const {
     if(!computed) {
-      wspd.clear();
-      compute(computed_split_tree.root());
+      computed_wspd.clear();
+      compute(stree.root());
       computed = true;
     }
+  }
+
+  FT separation_ratio() {
+    return s;
   }
 
   void separation_ratio(FT separation_ratio) {
@@ -66,36 +89,46 @@ public:
   template <class InputIterator>
   void set(int d, InputIterator begin, InputIterator end) {
     points.assign(begin, end);
-    computed_split_tree.set(d, begin, end);
+    stree.set(d, begin, end);
     computed = false;
   }
 
   template <class InputIterator>
   void add(InputIterator begin, InputIterator end) {
     points.insert(points.end(), begin, end);
-    computed_split_tree.add(begin, end);
+    stree.add(begin, end);
     computed = false;
   }
 
   void clear() {
     points.clear();
-    computed_split_tree.clear();
-    wspd.clear();
+    stree.clear();
+    computed_wspd.clear();
     computed = true;
   }
 
   const Split_tree& split_tree() const {
-    return computed_split_tree;
+    return stree;
+  }
+
+  const Well_separated_pair_decomposition& wspd() const {
+    compute();
+    return computed_wspd;
   }
 
   Well_separated_pair_iterator wspd_begin() const {
     compute();
-    return wspd.begin();
+    return computed_wspd.begin();
   }
 
   Well_separated_pair_iterator wspd_end() const {
     compute();
-    return wspd.end();
+    return computed_wspd.end();
+  }
+
+  int wspd_size() const {
+    compute();
+    return computed_wspd.size();
   }
 
   Point_iterator points_begin() const {
@@ -106,9 +139,8 @@ public:
     return points.end();
   }
 
-  int size() const {
-    compute();
-    return wspd.size();
+  int points_size() const {
+    return points.size();
   }
 private:
   void compute(Node_const_handle u) const {
@@ -121,7 +153,7 @@ private:
 
   void find_pairs(Node_const_handle v, Node_const_handle w) const {
     if(v->is_well_separated_with(w, s)) {
-      wspd.push_back(Well_separated_pair(v,w));
+      computed_wspd.push_back(Well_separated_pair(v,w));
     }
     else {
       if(v->has_longuer_side_than(w)) {
@@ -136,8 +168,9 @@ private:
   }
 protected:
   mutable bool computed;
-  mutable Well_separated_pair_decomposition wspd;
-  Split_tree computed_split_tree;
+  mutable Well_separated_pair_decomposition computed_wspd;
+  int d;
+  Split_tree stree;
   Point_vector points;
   FT s;
 };

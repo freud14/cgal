@@ -116,6 +116,22 @@ Returns the point container of node.
 */
 const Point_container& point_container() const;
 
+/*!
+Indicates wheter this node is well-separated with `w` with respect to the
+separation ratio `s`. The calculation is done using the centers of the bounding
+boxes of the two nodes and the biggest of the two squared radius as radius.
+
+Note that not because two nodes are well-separated that
+they are part of a well-separated pair decomposition of a point set.
+*/
+bool is_well_separated_with(Node_const_handle w, FT s) const;
+
+/*!
+Indicates wheter this node has a side that has a length longer than or equal to
+the length of any side of `w`.
+*/
+bool has_longuer_side_than(Node_const_handle w) const;
+
 /// @}
 
 /// \name Destruction
