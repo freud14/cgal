@@ -4,19 +4,23 @@
 #include <CGAL/CGAL_Ipelet_base.h>
 #include <CGAL/Split_tree.h>
 #include <CGAL/WSPD.h>
+#include <CGAL/WSPD_spanner.h>
+#include <CGAL/boost/graph/graph_traits_WSPD_spanner.h>
 #include <CGAL/Split_tree_traits_2.h>
 #include <cfloat>
 
 namespace CGAL_wspd {
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel     Epick;
-typedef CGAL::Split_tree_traits_2<Epick>                        Kernel;
-typedef CGAL::Split_tree<Kernel>                                Split_tree;
-typedef typename Split_tree::Bounding_box_iterator              Bounding_box_iterator;
-typedef CGAL::WSPD<Kernel>                                      WSPD;
-typedef typename WSPD::Well_separated_pair_iterator             Well_separated_pair_iterator;
-typedef typename WSPD::Well_separated_pair                      Well_separated_pair;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel        Epick;
+typedef CGAL::Split_tree_traits_2<Epick>                           Kernel;
+typedef CGAL::Split_tree<Kernel>                                   Split_tree;
+typedef typename Split_tree::Bounding_box_iterator                 Bounding_box_iterator;
+typedef CGAL::WSPD<Kernel>                                         WSPD;
+typedef typename WSPD::Well_separated_pair_iterator                Well_separated_pair_iterator;
+typedef typename WSPD::Well_separated_pair                         Well_separated_pair;
 
+typedef CGAL::WSPD_spanner<Kernel>                                 WSPD_spanner;
+typedef typename boost::graph_traits<WSPD_spanner>::edge_iterator  edge_iterator;
 
 const std::string labels[] = {  "Split tree bounding boxes", "WSPD", "t-spanner (using t)", "t-spanner (using s)", "Help" };
 const std::string hmsg[] = {
@@ -55,7 +59,7 @@ void Wspd_ipelet::protected_run(int fn)
         print_error_message("No mark selected");
         return;
       }
-      for(std::vector<Point_2>::iterator it = points_read.begin(); it < points_read.end(); it++) {
+      for(std::vector<Point_2>::iterator it = points_read.begin(); it != points_read.end(); it++) {
         if(std::find(points_read.begin(), it, *it) == it) {
           lst.push_back(*it);
         }
@@ -71,7 +75,7 @@ void Wspd_ipelet::protected_run(int fn)
     case 0:
     {
       Split_tree tree(2, lst.begin(), lst.end());
-      for(Bounding_box_iterator it = tree.bounding_box_begin(); it < tree.bounding_box_end(); it++) {
+      for(Bounding_box_iterator it = tree.bounding_box_begin(); it != tree.bounding_box_end(); it++) {
         Iso_rectangle_2 bbox = *it;
         if(bbox.min() != bbox.max()) {
           draw_in_ipe(bbox);
@@ -85,7 +89,7 @@ void Wspd_ipelet::protected_run(int fn)
       double s = request_double_from_user(1.0, 2.0, "Enter separation ratio s (default: 2)", "Invalid separation ratio");
       if(s == -1) return;
       WSPD wspd(2, s, lst.begin(), lst.end());
-      for(Well_separated_pair_iterator it = wspd.wspd_begin(); it < wspd.wspd_end(); it++) {
+      for(Well_separated_pair_iterator it = wspd.wspd_begin(); it != wspd.wspd_end(); it++) {
         const Well_separated_pair &pair = *it;
         Circle_2 c1 = pair.a()->enclosing_circle();
         Circle_2 c2 = pair.b()->enclosing_circle();
@@ -114,9 +118,10 @@ void Wspd_ipelet::protected_run(int fn)
       }
 
       WSPD wspd(2, s, lst.begin(), lst.end());
-      for(Well_separated_pair_iterator it = wspd.wspd_begin(); it < wspd.wspd_end(); it++) {
-        const Well_separated_pair &pair = *it;
-        draw_in_ipe(Segment_2(**pair.a()->point_container().begin(), **pair.b()->point_container().begin()));
+      WSPD_spanner spanner(wspd);
+      std::pair<edge_iterator, edge_iterator> edges = CGAL::edges(spanner);
+      for(edge_iterator it = edges.first; it != edges.second; it++) {
+        draw_in_ipe(Segment_2(CGAL::source(*it, spanner), CGAL::target(*it, spanner)));
       }
       group_selected_objects_();
       return;
