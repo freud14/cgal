@@ -26,7 +26,6 @@
 #include <utility>
 #include <algorithm>
 
-#include <boost/graph/graph_traits.hpp>
 #include <boost/iterator/transform_iterator.hpp>
 
 namespace CGAL {
@@ -88,7 +87,7 @@ public:
   typedef WSPD_spanner_vertex_edge_iterator<Traits,R>                Vertex_edge_iterator;
   typedef WSPD_spanner_adjacency_iterator<Traits,R>                  Adjacency_iterator;
 
-  WSPD_spanner(const WSPD& wspd_, R rep_chooser = R()) :
+  WSPD_spanner(const WSPD& wspd_, const R& rep_chooser = R()) :
                     wspd(wspd_.wspd()), points(wspd_.points_begin(), wspd_.points_end()), choose_rep(rep_chooser), computed(false) { }
 
   void compute() const {
@@ -144,7 +143,7 @@ public:
 private:
   Well_separated_pair_decomposition wspd;
   Point_vector points;
-  R choose_rep;
+  const R& choose_rep;
   mutable bool computed;
   mutable int nb_edges;
   mutable std::map<Point_d, std::vector<std::pair<Node_const_handle,Node_const_handle> > > edges;
@@ -262,25 +261,25 @@ private:
   }
 
   void setup_edges_iterator() {
-    current_representatives.clear();
-    current_representative_index = 0;
+    cur_reps.clear();
+    cur_rep_i = 0;
     if(current_edge != e.end()) {
-      choose_rep(current_edge->second, current_edge->first, std::back_inserter(current_representatives));
+      choose_rep(current_edge->second, current_edge->first, std::back_inserter(cur_reps));
     }
   }
 public:
   WSPD_spanner_vertex_edge_iterator& operator++() {
-    if(current_representative_index == current_representatives.size() - 1) {
+    if(cur_rep_i == cur_reps.size() - 1) {
       current_edge++;
       setup_edges_iterator();
     }
     else {
-      current_representative_index++;
+      cur_rep_i++;
     }
     return *this;
   }
   inline WSPD_spanner_vertex_edge_iterator operator++(int) { WSPD_spanner_vertex_edge_iterator ret = *this; this->operator++(); return ret; }
-  inline bool operator==(const WSPD_spanner_vertex_edge_iterator& rhs) const { return current_edge == rhs.current_edge && current_representative_index == rhs.current_representative_index; }
+  inline bool operator==(const WSPD_spanner_vertex_edge_iterator& rhs) const { return current_edge == rhs.current_edge && cur_rep_i == rhs.cur_rep_i; }
   inline bool operator!=(const WSPD_spanner_vertex_edge_iterator& rhs) const { return !this->operator==(rhs); }
   Node_const_handle from() const {
     return current_edge->first;
@@ -288,14 +287,14 @@ public:
   Node_const_handle to() const {
     return current_edge->second;
   }
-  Edge operator*() const { return Edge(p, current_representatives[current_representative_index], from(), to()); }
+  Edge operator*() const { return Edge(p, cur_reps[cur_rep_i], from(), to()); }
   Edge operator->() const { return **this; }
 private:
   Point_d p;
   const Edges& e;
   Edges_iterator current_edge;
-  Point_vector current_representatives;
-  int current_representative_index;
+  Point_vector cur_reps;
+  int cur_rep_i;
   const R& choose_rep;
 };
 
@@ -328,173 +327,5 @@ private:
 };
 
 } // End namespace
-
-namespace boost {
-
-template <class Traits, class R>
-struct graph_traits< CGAL::WSPD_spanner<Traits,R> > {
-
-  struct graph_traversal_category :
-    public virtual bidirectional_graph_tag,
-    public virtual adjacency_graph_tag,
-    public virtual edge_list_graph_tag,
-    public virtual vertex_list_graph_tag { };
-
-  typedef CGAL::WSPD_spanner<Traits,R> Spanner;
-
-  typedef typename Spanner::Node_const_handle                   node_descriptor;
-
-  typedef typename Spanner::Point_d                             vertex_descriptor;
-  typedef typename Spanner::Edge                                edge_descriptor;
-  typedef typename Spanner::Edge_iterator                       edge_iterator;
-
-  typedef typename Spanner::Vertex_iterator                     vertex_iterator;
-  typedef typename Spanner::Vertex_edge_iterator                out_edge_iterator;
-  typedef typename Spanner::Vertex_edge_iterator                in_edge_iterator;
-  typedef typename Spanner::Adjacency_iterator                  adjacency_iterator;
-
-  typedef undirected_tag                                        directed_category;
-  typedef disallow_parallel_edge_tag                            edge_parallel_category;
-  typedef graph_traversal_category                              traversal_category;
-  typedef int                                                   size_type;
-  typedef size_type                                             vertices_size_type;
-  typedef size_type                                             edges_size_type;
-  typedef size_type                                             degree_size_type;
-};
-
-} // namespace boost
-
-template <class Traits, class R>
-typename boost::graph_traits< CGAL::WSPD_spanner<Traits,R> >::vertex_descriptor
-source(typename boost::graph_traits< CGAL::WSPD_spanner<Traits,R> >::edge_descriptor e,
-       const CGAL::WSPD_spanner<Traits,R>& g)
-{
-  return e.from;
-}
-
-template <class Traits, class R>
-typename boost::graph_traits< CGAL::WSPD_spanner<Traits,R> >::vertex_descriptor
-target(typename boost::graph_traits< CGAL::WSPD_spanner<Traits,R> >::edge_descriptor e,
-       const CGAL::WSPD_spanner<Traits,R>& g)
-{
-  return e.to;
-}
-
-template <class Traits, class R>
-typename boost::graph_traits< CGAL::WSPD_spanner<Traits,R> >::node_descriptor
-source_node(typename boost::graph_traits< CGAL::WSPD_spanner<Traits,R> >::edge_descriptor e,
-       const CGAL::WSPD_spanner<Traits,R>& g)
-{
-  return e.node_from;
-}
-
-template <class Traits, class R>
-typename boost::graph_traits< CGAL::WSPD_spanner<Traits,R> >::node_descriptor
-target_node(typename boost::graph_traits< CGAL::WSPD_spanner<Traits,R> >::edge_descriptor e,
-       const CGAL::WSPD_spanner<Traits,R>& g)
-{
-  return e.node_to;
-}
-
-template <class Traits, class R>
-inline std::pair<
-  typename boost::graph_traits< CGAL::WSPD_spanner<Traits,R> >::vertex_iterator,
-  typename boost::graph_traits< CGAL::WSPD_spanner<Traits,R> >::vertex_iterator >
-vertices(const CGAL::WSPD_spanner<Traits,R>& g)
-{
-  return g.point_iterator();
-}
-
-
-template <class Traits, class R>
-inline std::pair<
-  typename boost::graph_traits< CGAL::WSPD_spanner<Traits,R> >::edge_iterator,
-  typename boost::graph_traits< CGAL::WSPD_spanner<Traits,R> >::edge_iterator >
-edges(const CGAL::WSPD_spanner<Traits,R>& g)
-{
-  return g.edge_iterator();
-}
-
-template <class Traits, class R>
-inline std::pair<
-  typename boost::graph_traits< CGAL::WSPD_spanner<Traits,R> >::out_edge_iterator,
-  typename boost::graph_traits< CGAL::WSPD_spanner<Traits,R> >::out_edge_iterator >
-out_edges(
-  typename boost::graph_traits< CGAL::WSPD_spanner<Traits,R> >::vertex_descriptor u,
-  const CGAL::WSPD_spanner<Traits,R>& g)
-{
-  return g.vertex_edge_iterator(u);
-}
-
-template <class Traits, class R>
-inline std::pair<
-  typename boost::graph_traits< CGAL::WSPD_spanner<Traits,R> >::in_edge_iterator,
-  typename boost::graph_traits< CGAL::WSPD_spanner<Traits,R> >::in_edge_iterator >
-in_edges(
-  typename boost::graph_traits< CGAL::WSPD_spanner<Traits,R> >::vertex_descriptor u,
-  const CGAL::WSPD_spanner<Traits,R>& g)
-{
-  return g.vertex_edge_iterator(u);
-}
-
-template <class Traits, class R>
-inline std::pair<
-  typename boost::graph_traits< CGAL::WSPD_spanner<Traits,R> >::adjacency_iterator,
-  typename boost::graph_traits< CGAL::WSPD_spanner<Traits,R> >::adjacency_iterator >
-adjacent_vertices(
-  typename boost::graph_traits< CGAL::WSPD_spanner<Traits,R> >::vertex_descriptor u,
-  const CGAL::WSPD_spanner<Traits,R>& g)
-{
-  return g.adjacency_iterator(u);
-}
-
-template <class Traits, class R>
-typename boost::graph_traits< CGAL::WSPD_spanner<Traits,R> >::vertices_size_type
-num_vertices(const CGAL::WSPD_spanner<Traits,R>& g)
-{
-  return g.num_points();
-}
-
-template <class Traits, class R>
-typename boost::graph_traits< CGAL::WSPD_spanner<Traits,R> >::edges_size_type
-num_edges(const CGAL::WSPD_spanner<Traits,R>& g)
-{
-  return  g.num_edges();
-}
-
-template <class Traits, class R>
-typename boost::graph_traits< CGAL::WSPD_spanner<Traits,R> >::degree_size_type
-out_degree(
-  typename boost::graph_traits< CGAL::WSPD_spanner<Traits,R> >::vertex_descriptor u,
-  const CGAL::WSPD_spanner<Traits,R>& g)
-{
-  return degree(u, g);
-}
-
-template <class Traits, class R>
-typename boost::graph_traits< CGAL::WSPD_spanner<Traits,R> >::degree_size_type
-in_degree(
-  typename boost::graph_traits< CGAL::WSPD_spanner<Traits,R> >::vertex_descriptor u,
-  const CGAL::WSPD_spanner<Traits,R>& g)
-{
-  return degree(u, g);
-}
-
-template <class Traits, class R>
-typename boost::graph_traits< CGAL::WSPD_spanner<Traits,R> >::degree_size_type
-degree(
-  typename boost::graph_traits< CGAL::WSPD_spanner<Traits,R> >::vertex_descriptor u,
-  const CGAL::WSPD_spanner<Traits,R>& g)
-{
-  typedef typename boost::graph_traits< CGAL::WSPD_spanner<Traits,R> >::adjacency_iterator adjacency_iterator;
-
-  typename boost::graph_traits< CGAL::WSPD_spanner<Traits,R> >::degree_size_type deg = 0;
-  std::pair<adjacency_iterator, adjacency_iterator> iterators = adjacent_vertices(u, g);
-  for(adjacency_iterator it = iterators.first; it != iterators.second; it++) {
-    ++deg;
-  }
-
-  return deg;
-}
 
 #endif // CGAL_WSPD_SPANNER_H

@@ -1,0 +1,46 @@
+/*!
+\defgroup PkgBGLWspdTraits Specializations of boost::graph_traits
+
+\ingroup PkgWspd
+
+`Boost Graph Library` defines the class template
+<A HREF="http://www.boost.org/libs/graph/doc/graph_traits.html">`boost::graph_traits`</A>
+as a uniform interface to the properties and types of %graph types.
+
+We provide a specializations of this class template for the %WSPD spanner.
+
+\section BGLWSPDSpanner Specialization for the WSPD spanner
+
+Defined in `<CGAL/boost/graph/graph_traits_WSPD_spanner.h>`
+
+We provide partial specialization for the class `CGAL::WSPD_spanner` so that it is a model
+of the graph concepts
+<A HREF="http://www.boost.org/libs/graph/doc/BidirectionalGraph.html">`BidirectionalGraph`</A>,
+<A HREF="http://www.boost.org/libs/graph/doc/AdjacencyGraph.html">`AdjacencyGraph`</A>,
+<A HREF="http://www.boost.org/libs/graph/doc/VertexListGraph.html">`VertexListGraph`</A> and
+<A HREF="http://www.boost.org/libs/graph/doc/EdgeListGraph.html">`EdgeListGraph`</A>.
+
+The traits class `boost::graph_traits< CGAL::WSPD_spanner<Traits,R> >` provides the following types:
+
+| Member                   | Value                                  | Description                                            |
+| :----------------------- | :------------------------------------: | :----------------------------------------------------- |
+| `vertex_descriptor`      | `WSPD_spanner::Point_d`                | The vertex descriptor                                  |
+| `edge_descriptor`        | `WSPD_spanner::Edge`                   | The edge descriptor                                    |
+| `node_descriptor`        | `WSPD_spanner::Node_const_handle`      | The node descriptor of the endpoints of an edge        |
+| `adjacency_iterator`     | `WSPD_spanner::Adjacency_iterator`     | Iterates through adjacent vertices                     |
+| `out_edge_iterator`      | `WSPD_spanner::Vertex_edge_iterator`   | Iterate through the out-edges of a vertex.             |
+| `in_edge_iterator`       | `WSPD_spanner::Vertex_edge_iterator`   | Iterate through the in-edges of a vertex.              |
+| `vertex_iterator`        | `WSPD_spanner::Vertex_iterator`        | Iterate through the vertices of a WSPD spanner.        |
+| `edge_iterator`          | `WSPD_spanner::Edge_iterator`          | Iterate through the edges of a WSPD spanner.           |
+| `directed_category`      | `boost::undirected_tag`                | Indicates that this graph is undirected.               |
+| `edge_parallel_category` | `boost::disallow_parallel_edge_tag`    | Indicates that this graph does not support multiedges. |
+| `traversal_category`     | Inherits from `boost::bidirectional_graph_tag`, `boost::adjacency_graph_tag`, `boost::vertex_list_graph_tag` and `boost::edge_list_graph_tag` | |
+| `vertices_size_type`     | `int`                                  | The size type of the vertex list                       |
+| `edges_size_type`        | `int`                                  | The size type of the edge list                         |
+| `degree_size_type`       | `int`                                  | The size type of the adjacency list                    |
+
+Note that the implementation also provides the functions `source_node(e, g)` and
+`target_node(e, g)` which each return a `node_descriptor` corresponding to the node
+in which `source(e, g)` and `target(e, g)` are respectively.
+
+*/

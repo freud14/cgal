@@ -8,6 +8,7 @@
 
 #include <CGAL/WSPD.h>
 #include <CGAL/WSPD_spanner.h>
+#include <CGAL/boost/graph/graph_traits_WSPD_spanner.h>
 
 #include <CGAL/wspd_test_util.h>
 
@@ -166,28 +167,15 @@ wspd_spanner__batch_test(int d, const Traits& traits)
   */
   typedef typename Traits::Point_d Point_d;
   typedef CGAL::WSPD<Traits> WSPD;
-  typedef typename WSPD::Well_separated_pair Well_separated_pair;
   typedef typename WSPD::Node_const_handle Node_const_handle;
   typedef Boundary_representative_chooser<Traits> R;
 
-
+  typedef CGAL::WSPD_spanner<Traits> WSPD_spanner_default;
   typedef CGAL::WSPD_spanner<Traits, R> WSPD_spanner;
   typedef typename WSPD_spanner::Edge Edge;
-  typedef bool (*Edge_comparison)(const Edge&, const Edge&);
-  Edge_comparison edge_equal = equal<Traits, R>;
-  Edge_comparison edge_strict_equal = strictly_equal<Traits, R>;
-
-  typedef boost::graph_traits<WSPD_spanner> graph_traits;
-  typedef typename graph_traits::adjacency_iterator adjacency_iterator;
-  typedef typename graph_traits::edge_iterator edge_iterator;
-  typedef typename graph_traits::vertex_iterator vertex_iterator;
-  typedef typename graph_traits::out_edge_iterator vertex_edge_iterator;
 
   typedef std::vector<Point_d> Point_vector;
-  typedef typename Point_vector::iterator Point_iterator;
   typedef std::vector<Edge> Edge_vector;
-  typedef typename Edge_vector::iterator Edge_iterator;
-
 
   WSPD empty_wspd(d, 2.0);
   R empty_r(d, empty_wspd.split_tree().root());
@@ -205,8 +193,8 @@ wspd_spanner__batch_test(int d, const Traits& traits)
   Point_d two_points[] = {get_point_d(d, 1, 2, 5, traits), get_point_d(d, 1, 4, 7, traits)};
   Point_vector two_points_vec(two_points, two_points + 2);
   WSPD two_points_wspd(d, 2.0, two_points_vec.begin(), two_points_vec.end());
-  R two_points_r(d, two_points_wspd.split_tree().root());
-  WSPD_spanner two_points_spanner(two_points_wspd, two_points_r);
+  // With default representatives.
+  WSPD_spanner_default two_points_spanner(two_points_wspd);
   Node_const_handle two_points_root = two_points_wspd.split_tree().root();
   Edge_vector two_points_expected_edges;
   two_points_expected_edges.push_back(Edge(two_points[0], two_points[1], two_points_root->left(), two_points_root->right()));
