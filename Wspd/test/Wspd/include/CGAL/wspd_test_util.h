@@ -1,3 +1,5 @@
+#ifndef WSPD_TEST_UTIL_H
+#define WSPD_TEST_UTIL_H
 #include <vector>
 #include <functional>
 
@@ -51,3 +53,5 @@ get_point_d(int d, typename Traits::RT a, typename Traits::RT b, typename Traits
 }
 
 }
+
+#endif // WSPD_TEST_UTIL_H

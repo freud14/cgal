@@ -1,5 +1,5 @@
-#ifndef SPLIT_TREE_TEST
-#define SPLIT_TREE_TEST
+#ifndef SPLIT_TREE_TEST_H
+#define SPLIT_TREE_TEST_H
 
 #include <cassert>
 #include <iostream>
@@ -239,4 +239,4 @@ split_tree__batch_test(int d, const Traits& traits)
 
 } //namespace CGAL
 
-#endif // SPLIT_TREE_TEST
+#endif // SPLIT_TREE_TEST_H

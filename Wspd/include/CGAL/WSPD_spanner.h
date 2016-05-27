@@ -37,7 +37,7 @@ struct Default_representative_chooser {
 
   template <class OutputIterator>
   void operator()(Node_const_handle node, Node_const_handle other_node_in_pair, OutputIterator it) const {
-    *it = **node->point_container().begin();
+    *it = *node->points_begin();
     ++it;
   }
 };

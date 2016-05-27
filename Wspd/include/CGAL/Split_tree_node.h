@@ -126,6 +126,13 @@ public:
   typedef typename Traits::Vector_d                                  Vector_d;
   typedef CGAL::Point_container<Traits>                              Point_container;
 
+  struct Point_iterator_function {
+    typedef const Point_d* argument_type;
+    typedef const Point_d& result_type;
+    result_type operator() (argument_type point_ptr) const {return *point_ptr;}
+  };
+  typedef boost::transform_iterator<Point_iterator_function, typename Point_container::const_iterator> Point_iterator;
+
   typedef typename Traits::FT                                        FT;
   typedef typename internal::Get_dimension_tag<Traits>::Dimension    D;
 
@@ -213,8 +220,16 @@ public:
     return sqradius;
   }
 
-  const Point_container& point_container() const {
-    return container;
+  Point_iterator points_begin() const {
+    return Point_iterator(container.begin(), Point_iterator_function());
+  }
+
+  Point_iterator points_end() const {
+    return Point_iterator(container.end(), Point_iterator_function());
+  }
+
+  int points_size() const {
+    return container.size();
   }
 
   bool is_well_separated_with(Node_const_handle w, FT s) const  {

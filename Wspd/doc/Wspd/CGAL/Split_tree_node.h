@@ -45,9 +45,9 @@ Sphere class.
 typedef typename Traits::Sphere_d Sphere_d;
 
 /*!
-The point container class.
+An const iterator of `Point_d`.
 */
-typedef CGAL::Point_container<Traits> Point_container;
+typedef unspecified_type Point_iterator;
 
 /// @}
 
@@ -112,9 +112,19 @@ because it is less expensive than `Split_tree_node::enclosing_circle()`.
 FT squared_radius() const;
 
 /*!
-Returns the point container of node.
+Returns a const iterator to the first point in this split tree node.
 */
-const Point_container& point_container() const;
+Point_iterator points_begin() const;
+
+/*!
+Returns a past-the-end const iterator of the points in this split tree node.
+*/
+Point_iterator points_end() const;
+
+/*!
+Returns the number of points in this split tree node.
+*/
+int points_size() const;
 
 /*!
 Indicates wheter this node is well-separated with `w` with respect to the

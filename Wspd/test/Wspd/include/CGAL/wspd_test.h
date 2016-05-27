@@ -1,5 +1,5 @@
-#ifndef WSPD_TEST
-#define WSPD_TEST
+#ifndef WSPD_TEST_H
+#define WSPD_TEST_H
 
 #include <cassert>
 #include <iostream>
@@ -13,9 +13,9 @@ namespace CGAL {
 template <class Traits>
 bool
 in(typename Split_tree<Traits>::Node_const_handle node, const typename Traits::Point_d& p) {
-  typedef typename Split_tree<Traits>::Point_container Point_container;
-  for(typename Point_container::const_iterator it = node->point_container().begin(); it != node->point_container().end(); it++) {
-    if(**it == p) {
+  typedef typename Split_tree<Traits>::Node::Point_iterator Point_iterator;
+  for(Point_iterator it = node->points_begin(); it != node->points_end(); it++) {
+    if(*it == p) {
       return true;
     }
   }
@@ -192,4 +192,4 @@ wspd__batch_test(int d, const Traits& traits)
 
 } //namespace CGAL
 
-#endif // WSPD_TEST
+#endif // WSPD_TEST_H

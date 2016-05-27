@@ -1,5 +1,5 @@
-#ifndef WSPD_TEST
-#define WSPD_TEST
+#ifndef WSPD_SPANNER_TEST_H
+#define WSPD_SPANNER_TEST_H
 
 #include <cassert>
 #include <iostream>
@@ -55,7 +55,7 @@ private:
   Point_vector compute_tree_nodes_representatives(Node_const_handle node) const {
     Point_vector current_boundary;
     if(node->is_leaf()) {
-      Point_d p = **node->point_container().begin();
+      Point_d p = *node->points_begin();
       current_boundary.push_back(p);
     }
     else {
@@ -293,4 +293,4 @@ wspd_spanner__batch_test(int d, const Traits& traits)
 
 } //namespace CGAL
 
-#endif // WSPD_TEST
+#endif // WSPD_SPANNER_TEST_H

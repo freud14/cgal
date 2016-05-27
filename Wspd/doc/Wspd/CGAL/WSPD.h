@@ -32,6 +32,11 @@ Split tree class.
 typedef CGAL::Split_tree<Traits>                                   Split_tree;
 
 /*!
+Split tree node.
+*/
+typedef typename Split_tree::Node                                  Node;
+
+/*!
 Split tree node const handle.
 */
 typedef typename Split_tree::Node_const_handle                     Node_const_handle;
@@ -41,6 +46,11 @@ typedef typename Split_tree::Node_const_handle                     Node_const_ha
 A well-separated pair as a pair of node of the split tree.
 */
 typedef CGAL::Well_separated_pair<Traits>                          Well_separated_pair;
+
+/*!
+A well-separated pair decomposition as a Range of Well_separated_pair's;
+*/
+typedef unspecified_type                                           Well_separated_pair_decomposition;
 
 /*!
 An const iterator of `Well_separated_pair`.
@@ -86,6 +96,17 @@ the methods `wspd_begin` and `wspd_end`.
 */
 virtual void compute() const;
 
+
+/*!
+Returns the dimension.
+*/
+int dimension() const;
+
+/*!
+Returns the separation ratio.
+*/
+FT separation_ratio() const;
+
 /*!
 Changes the separation ratio. The %WSPD will need to be recomputed.
 */
@@ -116,6 +137,11 @@ void clear();
 Returns the associated split tree.
 */
 const Split_tree& split_tree() const;
+
+/*!
+Returns the well-separated pair decomposition.
+*/
+const Well_separated_pair_decomposition& wspd() const;
 
 /*!
 Returns a const iterator to the first pair in the %WSPD. The computation of the

@@ -32,6 +32,7 @@ template <class Traits>
 class WSPD {
 public:
   typedef CGAL::Split_tree<Traits>                                   Split_tree;
+  typedef typename Split_tree::Node                                  Node;
   typedef typename Split_tree::Node_const_handle                     Node_const_handle;
   typedef CGAL::Well_separated_pair<Traits>                          Well_separated_pair;
   typedef typename std::vector<Well_separated_pair>                  Well_separated_pair_decomposition;
@@ -75,7 +76,11 @@ public:
     }
   }
 
-  FT separation_ratio() {
+  int dimension() const {
+    return d;
+  }
+
+  FT separation_ratio() const {
     return s;
   }
 
