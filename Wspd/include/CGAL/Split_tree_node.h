@@ -129,7 +129,7 @@ public:
   struct Point_iterator_function {
     typedef const Point_d* argument_type;
     typedef const Point_d& result_type;
-    result_type operator() (argument_type point_ptr) const {return *point_ptr;}
+    result_type operator() (argument_type point_ptr) const {return *point_ptr; }
   };
   typedef boost::transform_iterator<Point_iterator_function, typename Point_container::const_iterator> Point_iterator;
 
